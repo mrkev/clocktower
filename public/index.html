@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #results { list-style-type: none; margin: 0; padding: 0; }
+      #results li { padding: 5px 10px; }
+      #results li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+  <body>
+
+    <ul id="results"></ul>
+    <form id="search" action="">
+      <input id="stext" type="text"><input type="submit" value="Search">
+      <select name="term" id="sterm">
+        <option value="FA14">Fall 2014</option>
+      </select>
+    </form>
+
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+    <script>
+
+      var _user = {}
+
+      var socket = io();
+
+      $('form#search').submit(function () {
+        socket.emit('search query', 
+          { 
+            query : $('#stext').val(), 
+            term : $('#sterm').val()
+          });
+        return false;
+      });
+
+      socket.on('search results', function (results) {
+        $('#results').empty();
+        for (var i = results.length - 1; i >= 0; i--) {
+          var display_html = (results[i].subject_key + " " 
+                            + results[i].catalog_number + " " 
+                            + results[i].title).replace($('#stext').val(), '<strong>$&</strong>');
+          $('#results').append($('<li>').html(display_html));
+        };
+      });
+
+      socket.on('connect', function (skt) {});
+
+      socket.on('user info', function (info) { _user = info; });
+
+    </script>
+  </body>
+</html>
