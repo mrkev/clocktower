@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <link rel="stylesheet" href="css/main.css">
+
+  </head>
+  <body>
+
+    <ul id="results"></ul>
+    <form id="search" action="">
+      <input id="stext" type="text"><input type="submit" value="Search">
+      <select name="term" id="sterm">
+        <option value="FA14">Fall 2014</option>
+      </select>
+    </form>
+
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/bower_components/platform/platform.js"></script>
+
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+    <script>
+
+      var _user = {}
+
+      var socket = io();
+
+      $('form#search').submit(function () {
+        socket.emit('search query', 
+          { 
+            query : $('#stext').val(), 
+            term : $('#sterm').val()
+          });
+        return false;
+      });
+
+      socket.on('search results', function (results) {
+        $('#results').empty();
+        for (var i = results.length - 1; i >= 0; i--) {
+          var display_html = (results[i].subject_key + " " 
+                            + results[i].catalog_number + " " 
+                            + results[i].title).replace($('#stext').val(), '<strong>$&</strong>');
+          $('#results').append($('<li>').html(display_html));
+        };
+      });
+
+      socket.on('connect', function (skt) {});
+
+      socket.on('user info', function (info) { _user = info; });
+
+    </script>
+  </body>
+</html>

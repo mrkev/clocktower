@@ -1,0 +1,85 @@
+/** { margin: 0; padding: 0; box-sizing: border-box; }*/
+body { font: Helvetica, Arial; }
+/*form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }*/
+.src_list {
+	list-style-type: none; 
+	padding: 0;
+	overflow: scroll;
+}
+
+
+#search_results {
+	width: 100%;
+}
+
+#search_results li, #calendar_courses li {
+	padding: 6px 12px;
+
+	/* layout horizontal */
+	-ms-flex-direction: row;
+	-webkit-flex-direction: row;
+	flex-direction: row;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+
+}
+#search_results li span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	
+	/* flex */
+	-ms-flex: 1;
+	-webkit-flex: 1;
+	flex: 1;
+}
+input[type="checkbox"], input[type="radio"] {
+	margin: 0;
+}
+
+.striped_list li:nth-child(odd) { background: #f5f5f5; }
+
+
+p { white-space: normal; }
+
+html, body {height: 100%;}
+
+.horizontal-container {
+  width : auto;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  height: calc(100% - 26px);
+  padding-top: 26px;
+  background-color: #EEE;
+}
+.card {
+  width: 642px;
+  height: calc(100% - 62px);
+  background-color: rgb(255, 255, 255);
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  border-bottom-left-radius: 2px;
+  box-shadow: rgba(0, 0, 0, 0.0980392) 0px 2px 4px, rgba(0, 0, 0, 0.0980392) 0px 0px 3px;
+  margin-left: 14px;
+  margin-right: 14px;
+  padding: 12px 6px 36px 6px;
+  box-sizing: border-box;
+  display: inline-block;
+  vertical-align:middle;
+}
+
+.card .wide {
+  width: 963px;
+}
+
+.card_content {
+	height: 100%;
+}
+
+input {
+  margin: 1em;
+}

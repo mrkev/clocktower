@@ -4,7 +4,7 @@ var Getter  = require('./lib/urlgetter');
 var _		= require('underscore');
 var Q 		= require('q');
 var ES6P 	= require('es6-promise').Promise;
-
+var hash	= require('object-hash');
 /**
  * Whomping Willow v0.0.0
  *
@@ -30,6 +30,39 @@ module.exports = (function () {
 		return this.db;
 	};
 
+	var addHash = function(data) {
+		var total = data.length;
+		console.log('Hashing', data.length, 'objects...')
+		for (var n = 0; n < data.length; n++) {
+			data[n].hash = hash.MD5(data[n]);
+		};
+		console.log('done.');
+
+		return data;
+	};
+
+	var addIDs = function(data) {
+		var total = data.length;
+		console.log('ID-ing', data.length, 'objects...')
+		for (var n = 0; n < data.length; n++) {
+
+			var cid = data[n].subject_key + data[n].catalog_number; //+ '-' + data[n].sections[0].associated_class;
+
+			// Add id's for courses
+			if (data[n].sections.length > 1) console.log(data[n].subject_key, data[n].catalog_number, data[n].sections)
+			data[n].course_id = cid;
+			// and for sections
+			
+			data[n].sections.forEach(function (sct) {
+				sct.course_id = cid;
+			});
+		};
+
+		console.log('done.');
+		return data;
+	};
+
+
 	Williow.prototype.clearCache = function() {
 		this.db = null;
 	};
@@ -44,7 +77,11 @@ module.exports = (function () {
 				});
 	
 				var getter = new Getter(urls, [JSON.parse, extract]);
-				return getter.get(1000).then(_.flatten).then(self.cache.bind(self));
+				return getter.get(800)
+							 .then(_.flatten)
+							 .then(addHash)
+							 .then(addIDs)
+							 .then(self.cache.bind(self));
 	
 			});
 	};
@@ -58,3 +95,5 @@ module.exports = (function () {
 
 	return new Williow('http://api-mrkev.rhcloud.com/redapi/roster');
 })();
+
+// module.exports.getDB().then(console.log, console.error, console.log)
