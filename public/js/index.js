@@ -83,7 +83,6 @@ app.controller('SearchController', function ($scope, socket, $sce) {
    * @param {[type]} course [description]
    */
   $scope.addCourse = function (course) {
-    console.log('Added', course.course_id);
     $scope.model.calendar.addCourse(course);
   };
 });
@@ -173,6 +172,18 @@ app.controller('CalendarController', function ($scope, socket) {
     return $scope.model.calendar.selectedCourses[course.course_id] !== undefined;
   };
 
+
+  // Note: No unselectCourse becasue there must always be at least one section
+  // of each type selected.
+  $scope.selectSection = function (section) {
+    $scope.model.calendar.selectSection(section);
+  }
+
+  $scope.isSelectedSection = function (section) {
+    return $scope.model.calendar
+      .selectedSections[section.course_id][section.ssr_component]
+                                == section.class_number;
+  }
 
 
   // $scope.$watch('term.course_ids', function (newval, oldval) {

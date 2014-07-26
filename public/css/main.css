@@ -72,8 +72,12 @@ html, body {height: 100%;}
   vertical-align:middle;
 }
 
-.card .wide {
+.wide {
   width: 963px;
+}
+
+.sidebar {
+  width: 230px;
 }
 
 .card_content {
@@ -83,3 +87,15 @@ html, body {height: 100%;}
 input {
   margin: 1em;
 }
+
+#calendar {
+  overflow: scroll;
+}
+
+.selected {
+  color: gray;
+}
+
+
+/* Shortcuts */
+.full_height { height: 100%; }

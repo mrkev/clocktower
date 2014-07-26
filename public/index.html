@@ -64,75 +64,90 @@
         -->
 
         <div class="card wide" ng-controller="CalendarController as vladimirovna">
-          Edit: <input type="checkbox" ng-model="app._app.editCalendar">
+          <div class="card_content" layout horizontal>
+            
+            <div class="sidebar">
+              Edit: <input type="checkbox" ng-model="app._app.editCalendar">
 
-          <!-- List of courses in the current calendar -->
-          <ul id="calendar_courses" class="striped_list src_list">
-            <li ng-repeat="course in ccourses">
+              <!-- List of courses in the current calendar -->
+              <ul id="calendar_courses" class="striped_list src_list">
+                <li ng-repeat="course in ccourses">
 
-              <span ng-show="willQueryInfo(course)">
-                Loading course...
-              </span>
+                  <span ng-show="willQueryInfo(course)">
+                    Loading course...
+                  </span>
 
-              <span ng-hide="willQueryInfo(course)">
-                {{course.subject_key}} {{course.catalog_number}} 
-              </span>
-              
-              <span flex></span>
-
-              <button 
-                ng-click="removeCourse(course)"
-                ng-show="app._app.editCalendar"
-                >-</button> <!-- Button to remove. Shown on edit mode -->
-              
-              <button 
-                ng-hide  ="isSelectedCourse(course)"
-                ng-click ="selectCourse(course)">[ ]</button>
-
-              <button
-                ng-show  ="isSelectedCourse(course)"
-                ng-click ="unselectCourse(course)">[x]</button>
-            </li>
-
-          </ul>
-          
-
-          <!-- Acutal calendar. Should eventaully be drawn -->
-          <div id="calendar">
-            <ul>
-              <li ng-repeat="course in model.calendar.selectedCourses">
-
-                <span ng-show="willQueryInfo(course)">
-                  Loading course...
-                </span>
-
-                <span ng-hide="willQueryInfo(course)">
-                  Taking Course <strong>{{course.subject_key}} {{course.catalog_number}} </strong> with sections: 
+                  <span ng-hide="willQueryInfo(course)">
+                    {{course.subject_key}} {{course.catalog_number}} 
+                  </span>
                   
-                  <p ng-repeat="section in course.sections">
-                    {{section.ssr_component}} {{section.class_section}} ({{section.catalog_number}}) 
+                  <span flex></span>
+
+                  <button 
+                    ng-click="removeCourse(course)"
+                    ng-show="app._app.editCalendar"
+                    >-</button> <!-- Button to remove. Shown on edit mode -->
+                  
+                  <div ng-hide='app._app.editCalendar'>
+                    <button 
+                      ng-hide  ="isSelectedCourse(course)"
+                      ng-click ="selectCourse(course)">[ ]</button>
+
+                    <button
+                      ng-show  ="isSelectedCourse(course)"
+                      ng-click ="unselectCourse(course)">[x]</button>
+                  </div>
+                </li>
+
+              </ul>
+            </div>
+            
+
+            <!-- Acutal calendar. Should eventaully be drawn -->
+            <div id="calendar" flex>
+              <ul class='full_height'>
+                <li ng-repeat="course in model.calendar.selectedCourses">
+
+                  <span ng-show="willQueryInfo(course)">
+                    Loading course...
+                  </span>
+
+                  <span ng-hide="willQueryInfo(course)">
+                    Taking Course <strong>{{course.subject_key}} {{course.catalog_number}} </strong> with sections: 
                     
-                    which meets at {{section.meeting.facility_description}} from {{section.meeting.start_time}} to {{section.meeting.end_time}} on {{section.meeting.meeting_pattern}}. </br>
+                    <p 
+                      ng-repeat="section in course.sections"
+                      ng-class="{selected: isSelectedSection(section)}"
+                      ng-click="selectSection(section)">
 
-                    It is taught by:
+                      <button 
+                        ng-hide="isSelectedSection(section)"
+                        ng-click="selectSection(section)"></button>
 
-                    <span
-                    ng-show="section.meeting.instructors"
-                    ng-repeat="instructor in section.meeting.instructors">
-                    {{instructor}}</span>
+                      {{section.ssr_component}} {{section.class_section}} ({{section.class_number}}) 
+                      
+                      which meets at {{section.meeting.facility_description}} from {{section.meeting.start_time}} to {{section.meeting.end_time}} on {{section.meeting.meeting_pattern}}. </br>
 
-                    <span ng-hide="section.meeting.instructors">
-                      TBD
-                    </span>
+                      It is taught by:
 
-                  </p>
-                  
-                </span>
+                      <span
+                      ng-show="section.meeting.instructors"
+                      ng-repeat="instructor in section.meeting.instructors">
+                      {{instructor}}</span>
 
-              </li>
-            </ul>
+                      <span ng-hide="section.meeting.instructors">
+                        TBD
+                      </span>
+
+                    </p>
+                    
+                  </span>
+
+                </li>
+              </ul>
+            </div>
+
           </div>
-
         </div>
 
 

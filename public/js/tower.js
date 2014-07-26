@@ -1,5 +1,5 @@
 'use strict';
-/* global Term */
+/* global Term, $ */
 
 
 /**
@@ -86,6 +86,7 @@ console.log('TowerModel', TowerModel);
  * @return {[type]} [description]
  */
 var Calendar = (function () {
+  
   function Calendar (term) {
     var self = this;
 
@@ -114,6 +115,23 @@ var Calendar = (function () {
         return obj;
       }
     });
+
+
+    // Section selection.
+
+    // We will use the acutal section object here. It should be there already,
+    // because sections come with the course information (we don't want to keep
+    // them because they might change).
+
+    // This will 'course_id : { LEC: #, DIS: #, etc }' only, which should be 
+    // enough to quickly retrive selected courses. 
+    self._selectedSections = {};
+    Object.defineProperty(this, 'selectedSections', {
+      get : function () {
+        return self._selectedSections;
+      }
+    });
+
   }
 
   Calendar.prototype.selectCourse = function(cid) {
@@ -135,14 +153,60 @@ var Calendar = (function () {
   };
 
   Calendar.prototype.addCourse = function(course) { // Assume object, not id string
+
+    // Don't add duplicates
+    if ($.inArray(course.course_id, Object.keys(this.courses)) > 0) return;
+
+    // Add the course.
     this.term.addCourse(course);
     this.courses[course.course_id] = course;
+
+    // Select sections for each component.
+    var selsect = {};
+    course.sections.forEach(function (sect) {
+      if (selsect[sect.ssr_component]) return;
+      selsect[sect.ssr_component] = sect.class_number;
+    });
+
+    this._selectedSections[course.course_id] = selsect;
+
   };
 
   Calendar.prototype.removeCourse = function(course_id) {
+    this.unselectCourse(course_id);
     this.term.removeCourse(course_id);
     delete this.courses[course_id];
+
+    // Remove selected selections for that course.
+    delete this._selectedSections[course_id];
   };
+
+
+
+
+  // Section selection.
+
+  Calendar.prototype.selectSection = function(section) {
+    var self = this;
+
+    var csects = self._selectedSections[section.course_id];
+
+    // If section is already selected do nothing.
+    if (csects[section.ssr_component] === section.class_number) return;
+
+    // Mark that section for its given ssr_component.
+    csects[section.ssr_component] = section.class_number;
+
+  };
+
+  Calendar.prototype.unselectSection = function(section) {
+    delete this._selectedSections[section.course_id][section.ssr_component];
+  };
+
+
+
+
+  // Save
 
   Calendar.prototype.save = function() {
   	// body...
@@ -157,6 +221,56 @@ console.log('Calendar', Calendar);
 
 
 
+var TakenCourse = (function () {
+  
+  function TakenCourse (cobj) {
+    // Should cancel construction and return string.
+    // http://stackoverflow.com/questions/1978049/what-values-can-a-constructor-return-to-avoid-returning-this
+    if (typeof cobj !== 'object' || cobj === null) return cobj;
+    if (cobj === undefined) return null;
+
+    var self = this;
+    $.extend(this, cobj);
+
+    // Select some sections to take. One per type. Types could be defned by 
+    // class_section's first digit (class_section / 100 >> 0) or by 
+    // ssr_component.
+    // 
+    // Let's use ssr_component.
+    
+    self._selectedSections = {};
+
+    this.sections.forEach(function (sect) {
+
+      // There's already one. Return.
+      if (self._selectedSections[sect.ssr_component]) return;
+
+      // Set it.
+      self._selectedSections[sect.ssr_component] = sect;
+
+    });
+
+    Object.defineProperty(this, 'selectedSections', {
+      get : self.getSelectedSections,
+      set : self.setSelectedSections
+    });
+  }
+
+  TakenCourse.prototype.getSelectedSections = function() {
+    var self = this;
+    return Object.keys(self._selectedSections)
+      .map(function (x) { return self._selectedSections[x]; });
+  };
+
+  TakenCourse.prototype.setSelectedSections = function(sctarr) {
+    
+  };
+
+  return TakenCourse;
+
+})();
+
+console.log('TakenCourse', TakenCourse);
 
 
 
