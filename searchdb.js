@@ -49,7 +49,7 @@ module.exports = (function () {
 			var cid = data[n].subject_key + data[n].catalog_number; //+ '-' + data[n].sections[0].associated_class;
 
 			// Add id's for courses
-			if (data[n].sections.length > 1) console.log(data[n].subject_key, data[n].catalog_number, data[n].sections)
+			// if (data[n].sections.length > 1) consolelog(data[n].subject_key, data[n].catalog_number, data[n].sections)
 			data[n].course_id = cid;
 			// and for sections
 			
@@ -86,7 +86,7 @@ module.exports = (function () {
 			});
 	};
 
-	// d = require('./searchdb').getDB().then(function (data) { console.log(data.length); }, console.trace, console.log)
+	// d = require('./searchdb').getDB().then(function (data) { consolelog(data.length); }, console.trace, console.log)
 
 	Williow.prototype.getDB = function() {
 		if (this.db === null) return this.query();
@@ -96,4 +96,4 @@ module.exports = (function () {
 	return new Williow('http://api-mrkev.rhcloud.com/redapi/roster');
 })();
 
-// module.exports.getDB().then(console.log, console.error, console.log)
+// module.exports.getDB().then(consolelog, console.error, console.log)

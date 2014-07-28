@@ -1,0 +1,53 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	
+
+	<script src="/bower_components/datejs/build/date.js"></script>
+	
+	<script>
+	var canvas = { width: 200, height: 200 };
+
+	var meetingToDComp = function (meeting) {
+
+		var results = new Array(meeting.meeting_pattern.length);
+
+		var i = meeting.meeting_pattern.length;
+		while (i--) {
+		  console.log(meeting.meeting_pattern.charAt(i));
+		}
+
+
+
+		return results;
+	}
+
+	meetingToDComp({
+	    building_code: "URH",
+	    room: "262",
+	    start_time: "11:40AM",
+	    end_time: "12:55PM",
+	    start_date: "08/26/2014",
+	    end_date: "12/05/2014",
+	    instructors: [
+	        "Lau,C (cyl58)"
+	    ],
+	    facility_description: "Uris Hall 262",
+	    meeting_pattern: "TR"
+	});
+
+	var midnightMillis = function (time) {
+		return 	Date.parse('July 26th, 2014, ' + time) - 
+				Date.parse('July 26th, 2014, 12:00AM');
+	}
+
+	console.log(midnightMillis('1:00AM'))
+
+
+
+	</script>
+</body>
+</html>

@@ -84,3 +84,56 @@ var user = (function () {
   return User;
 })();
 
+
+var TakenCourse = (function () {
+  
+  function TakenCourse (cobj) {
+    // Should cancel construction and return string.
+    // http://stackoverflow.com/questions/1978049/what-values-can-a-constructor-return-to-avoid-returning-this
+    if (typeof cobj !== 'object' || cobj === null) return cobj;
+    if (cobj === undefined) return null;
+
+    var self = this;
+    $.extend(this, cobj);
+
+    // Select some sections to take. One per type. Types could be defned by 
+    // class_section's first digit (class_section / 100 >> 0) or by 
+    // ssr_component.
+    // 
+    // Let's use ssr_component.
+    
+    self._selectedSections = {};
+
+    this.sections.forEach(function (sect) {
+
+      // There's already one. Return.
+      if (self._selectedSections[sect.ssr_component]) return;
+
+      // Set it.
+      self._selectedSections[sect.ssr_component] = sect;
+
+    });
+
+    Object.defineProperty(this, 'selectedSections', {
+      get : self.getSelectedSections,
+      set : self.setSelectedSections
+    });
+  }
+
+  TakenCourse.prototype.getSelectedSections = function() {
+    var self = this;
+    return Object.keys(self._selectedSections)
+      .map(function (x) { return self._selectedSections[x]; });
+  };
+
+  TakenCourse.prototype.setSelectedSections = function(sctarr) {
+    
+  };
+
+  return TakenCourse;
+
+})();
+
+console.log('TakenCourse', TakenCourse);
+
+

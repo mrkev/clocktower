@@ -19,6 +19,7 @@
     "paper-elements": "Polymer/paper-elements#~0.3.4",
     "normalize-css": "~3.0.1",
     "polymer-ui-elements": "PolymerLabs/polymer-ui-elements#~0.3.0",
-    "jquery": "~2.1.1"
+    "jquery": "~2.1.1",
+    "datejs": "~1.0.0-rc1"
   }
 }

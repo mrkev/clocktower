@@ -5,12 +5,20 @@
 
     <!-- 1. Load platform.js for polyfill support. -->
     <script src="/bower_components/platform/platform.js"></script>
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
 
     <link rel="import"
           href="/bower_components/polymer-ui-field/polymer-ui-field.html">
     <link rel="import" 
           href="/bower_components/polymer-ui-icon/polymer-ui-icon.html">
+
+    <link rel="import"
+          href="/bower_components/paper-button/paper-button.html">
+    <link rel="import" 
+          href="/bower_components/paper-dialog/paper-dialog-transition.html">
+    <link rel="import"
+          href="/bower_components/paper-dialog/paper-dialog.html">
 
     <link rel="stylesheet" href="/bower_components/normalize-css/normalize.css">
     <link rel="stylesheet" href="css/main.css">
@@ -69,9 +77,12 @@
             <div class="sidebar">
               Edit: <input type="checkbox" ng-model="app._app.editCalendar">
 
+
+
               <!-- List of courses in the current calendar -->
               <ul id="calendar_courses" class="striped_list src_list">
-                <li ng-repeat="course in ccourses">
+                
+                <li ng-repeat="course in model.calendars[model.term].courses">
 
                   <span ng-show="willQueryInfo(course)">
                     Loading course...
@@ -106,7 +117,8 @@
             <!-- Acutal calendar. Should eventaully be drawn -->
             <div id="calendar" flex>
               <ul class='full_height'>
-                <li ng-repeat="course in model.calendar.selectedCourses">
+                
+                <li ng-repeat="course in model.calendars[model.term].selectedCourses">
 
                   <span ng-show="willQueryInfo(course)">
                     Loading course...
@@ -154,15 +166,62 @@
         <!-- Last Card: User information -->
 
         <div class="card">
-          {{app.user.name}}
+          <div class="card_content" layout vertical>
+            <span>
+              I'll manage the data myself: <input type="checkbox" ng-model="_app.saveToText"> <br/>
+
+              <span ng-show='_app.saveToText'>
+              
+                <paper-button 
+                  ng-show="_app.saveToText"
+                  label="Load or save data" 
+                  onclick="toggleDialog('paper-dialog-transition-center')">
+                </paper-button>
+                <br/>
+
+              </span>
+
+              Save and load to this browser: <input type="checkbox" disabled> <br/>
+              I'll login. Store my stuff there: <input type="checkbox" disabled> <br/>
+            </span>
+            
+
+            <paper-dialog heading="This is your data." transition="paper-dialog-transition-center">
+
+              <p>To save your calendars just copy it to a safe place. To load previous
+                calendars just copy it here. <strong>This will override everything
+                currently in the application.</strong></p> <br/>
+              
+              <textarea
+                class="data"
+                ng-model="savedata"
+                flex></textarea>
+
+              <paper-button label="Cancel" affirmative></paper-button>
+              <paper-button 
+                label="Done" 
+                ng-click="loadData(savedata)"
+                affirmative 
+                autofocus>
+              </paper-button>
+
+            </paper-dialog>
+            
+            
+            <script>
+              function toggleDialog(transition) {
+                var dialog = document.querySelector('paper-dialog[transition=' + transition + ']');
+                dialog.toggle();
+              }
+            </script>
+          </div>
         </div>
 
       </div>
     </div>
 
-    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="js/tower.js"></script>
-    <script src="js/term.js"></script>
+    <script src="js/calendar.js"></script>
 
     <script src="/socket.io/socket.io.js"></script>
 

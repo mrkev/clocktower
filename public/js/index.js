@@ -1,5 +1,5 @@
 'use strict';
-/* global app, TowerModel*/
+/* global app, TowerModel, $*/
 
 /* Controllers */
 
@@ -7,9 +7,24 @@ app.controller('AppController', function ($scope, socket) {
 
   $scope.model = new TowerModel();
 
+  $scope.loadData = function (txt) {
+    var newmodel = new TowerModel(txt);
+    $scope.model = newmodel;
+    $scope.currentCalendar = $scope.model.calendars[$scope.model.term];
+  };
+
+  $scope.$watch("model.savedata", function(newVal) {
+      $scope.savedata = JSON.stringify(newVal);
+  }, true);
+
+
+  $scope.currentCalendar = $scope.model.calendars[$scope.model.term];
 
   $scope._app = {
-    editCalendar : false
+    editCalendar  : false,
+    saveToText    : true,
+    saveToBroswer : false,
+    saveToLogin   : false,
   };
 
   // Utility function
@@ -31,7 +46,7 @@ app.controller('AppController', function ($scope, socket) {
   //  if (delIndex > -1) calarr.splice(delIndex, 1);
   //};
 
-  socket.on('connect',   function (skt)  { console.log('connected', skt);});
+  socket.on('connect',   function ()  {});
   socket.on('user info', function (info) { this.user = info; });
 
 });
@@ -83,7 +98,7 @@ app.controller('SearchController', function ($scope, socket, $sce) {
    * @param {[type]} course [description]
    */
   $scope.addCourse = function (course) {
-    $scope.model.calendar.addCourse(course);
+    $scope.currentCalendar.addCourse(course);
   };
 });
 
@@ -92,17 +107,15 @@ app.controller('SearchController', function ($scope, socket, $sce) {
 
 app.controller('CalendarController', function ($scope, socket) {
 
-  $scope.ccourses = $scope.model.calendar.courses;
-
   /**
    * Query the courses we need.
    */
   $scope.queryNeededCourses = function () {
 
     var needed = 
-    Object.keys($scope.model.calendar.courses).reduce
+    Object.keys($scope.currentCalendar.courses).reduce
     (function (prev, curr) {
-        if ($scope.model.calendar.courses[curr] === null) return prev.push(curr);
+        if ($scope.currentCalendar.courses[curr] === null) return prev.push(curr);
         return prev;
       }, []);
 
@@ -117,8 +130,8 @@ app.controller('CalendarController', function ($scope, socket) {
   socket.on('course info', function (results) {
 
     results.forEach(function (result) {
-      if ($scope.ccourses[result.course_id] === null) {
-        $scope.ccourses[result.course_id] = result;
+      if ($scope.currentCalendar.courses[result.course_id] === null) {
+        $scope.currentCalendar.courses[result.course_id] = result;
       }
     });
   });
@@ -148,7 +161,7 @@ app.controller('CalendarController', function ($scope, socket) {
    * @param  {Course} course the course to remove. (Compares using course.course_id)
    */
   $scope.removeCourse = function (course) {
-    $scope.model.calendar.removeCourse(course.course_id);
+    $scope.currentCalendar.removeCourse(course.course_id);
   };
 
   /**
@@ -156,7 +169,7 @@ app.controller('CalendarController', function ($scope, socket) {
    * @param  {Course} course course to select.
    */
   $scope.selectCourse = function (course) {
-    $scope.model.calendar.selectCourse(course.course_id);
+    $scope.currentCalendar.selectCourse(course.course_id);
   };
 
   /**
@@ -164,26 +177,24 @@ app.controller('CalendarController', function ($scope, socket) {
    * @param  {Course} course course to unselect.
    */
   $scope.unselectCourse = function (course) {
-    $scope.model.calendar.unselectCourse(course.course_id);
+    $scope.currentCalendar.unselectCourse(course.course_id);
   };
 
   $scope.isSelectedCourse = function (course) {
-    console.log('Selcourses, yo', $scope.model.calendar.selectedCourses)
-    return $scope.model.calendar.selectedCourses[course.course_id] !== undefined;
+    return $scope.currentCalendar.selectedCourses[course.course_id] !== undefined;
   };
 
 
   // Note: No unselectCourse becasue there must always be at least one section
   // of each type selected.
   $scope.selectSection = function (section) {
-    $scope.model.calendar.selectSection(section);
-  }
+    $scope.currentCalendar.selectSection(section);
+  };
 
   $scope.isSelectedSection = function (section) {
-    return $scope.model.calendar
-      .selectedSections[section.course_id][section.ssr_component]
-                                == section.class_number;
-  }
+    return $scope.currentCalendar
+      .selectedSections[section.course_id][section.ssr_component] == section.class_number;
+  };
 
 
   // $scope.$watch('term.course_ids', function (newval, oldval) {

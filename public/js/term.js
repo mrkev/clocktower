@@ -9,9 +9,20 @@
  */
 var Term = (function () {
 	
-	function Term () {
+	function Term (sm) {
 		var self = this;
-		this._sections = [];
+
+		// Model.
+
+		/**
+		 * Array of section objects. The entire objects are kept.
+		 * @type {Array<Object>}
+		 */
+		this._sections = sm ? sm.term : [];
+
+
+
+		// Dynamic Properties.
 
 		Object.defineProperty(this, 'sections', {
 			get : function () { return self._sections; }
@@ -22,6 +33,12 @@ var Term = (function () {
 		});
 	}
 
+						/// /// Courses /// ///
+
+	/**
+	 * Adds course object to this term. Saves the sections only.
+	 * @param {Object} course Course object to save.
+	 */
 	Term.prototype.addCourse = function(course) {
 		var self = this;
 
@@ -31,6 +48,12 @@ var Term = (function () {
 		});
 	};
 
+	/**
+	 * Removes course from the term, by removing all sections asociated with
+	 * its id.
+	 * @param  {Object | String} course Course object or course id of course to 
+	 *                   				remove
+	 */
 	Term.prototype.removeCourse = function(course) {
 		var cid = (typeof course === 'object') ? course.course_id : course; 
 
@@ -41,23 +64,11 @@ var Term = (function () {
 		}
 	};
 
-	/**
-	 * Adds section if not already present. Returns true if section was added,
-	 * else false.
-	 *
-	 * Saves all the section info because it's what the user cares about. This 
-	 * is enough information for pre-enroll. To update get sections, and replace
-	 * with updated section with same class_number;
-	 * 
-	 * @param {Boolean} section Wether the section was added or not.
-	 */
-	Term.prototype.addSection = function(section) {
-		var ids = this._sections.map(function (x) { return x.class_number; });
+	Term.prototype.updateCourse = function(cobj) {
 		
-		if (ids.find(this.section.class_number) > -1) return false;
-
-		this._sections.push(section);
-		return true;
+		course.sections.forEach(function (sct) {
+			
+		});
 	};
 
 	/**
@@ -74,8 +85,45 @@ var Term = (function () {
 				{ return x.course_id; }));
 	};
 
+
+						/// /// Persistence /// /// 
+	
+	/**
+	 * Returns all data necessary to rebuild term. Term can be rebuilt by 
+	 * calling new Term(x) where x is the return value of this function.
+	 * @return {Object} Term save object.
+	 */
+	Term.prototype.save = function() {
+		return { term : this._sections };
+	};
+
+
+
+
+	//////////////////////////// For internal use //////////////////////////////
+
+	/**
+	 * Adds section if not already present. Returns true if section was added,
+	 * else false. Should only be used internally. Only courses should be added,
+	 * so all sections are added.
+	 *
+	 * Saves all the section info because it's what the user cares about. This 
+	 * is enough information for pre-enroll. To update get sections, and replace
+	 * with updated section with same class_number;
+	 * 
+	 * @param {Boolean} section Wether the section was added or not.
+	 */
+	Term.prototype.addSection = function(section) {
+		var ids = this._sections.map(function (x) { return x.class_number; });
+		
+		if (ids.find(this.section.class_number) > -1) return false;
+
+		this._sections.push(section);
+		return true;
+	};
+
 	return Term;
 
 })();
 
-console.log('Term:', Term);
+console.log('Term', Term);

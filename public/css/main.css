@@ -96,6 +96,34 @@ input {
   color: gray;
 }
 
+textarea.data {
+  font-size: 7px;
+}
 
 /* Shortcuts */
 .full_height { height: 100%; }
+
+
+/* paper-dialog */
+paper-dialog {
+  width: 50%;
+  min-width: 430px;
+}
+
+paper-dialog textarea.data {
+  border: 1px solid #888; 
+  height: 122px;
+  width: 100%;
+}
+
+p {
+  margin-bottom: 0;
+}
+
+paper-dialog paper-button {
+  font-weight: bold;
+}
+
+paper-button[autofocus] {
+  color: #4285f4;
+}
