@@ -1,5 +1,5 @@
 'use strict';
-/* global Term, $ */
+/* global $, console */
 
 /**
  * Calendar class. Instance represents a single calendar as built by the user.
@@ -218,7 +218,7 @@ var Calendar = (function () {
       courses : this.courses,
       _selectedCourses  : this._selectedCourses,
       _selectedSections : this._selectedSections
-    }
+    };
   };
 
   return Calendar;

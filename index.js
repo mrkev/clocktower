@@ -171,7 +171,7 @@ var Clockwork = (function () {
 
 			var auser = io.of('/user-auth');
 			auser.on('connection', function(socket){
-			  console.log('someone connected'):
+			  console.log('someone connected');
 			});
 			auser.emit('hi', 'everyone!');
 		});
