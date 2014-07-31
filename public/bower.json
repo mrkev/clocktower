@@ -21,6 +21,7 @@
     "polymer-ui-elements": "PolymerLabs/polymer-ui-elements#~0.3.0",
     "jquery": "~2.1.1",
     "datejs": "~1.0.0-rc1",
-    "jquery-ui": "~1.11.0"
+    "jquery-ui": "~1.11.0",
+    "angular-local-storage": "~0.0.5"
   }
 }

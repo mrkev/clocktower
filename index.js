@@ -167,6 +167,13 @@ var Clockwork = (function () {
 			 * Disconnect
 			 */
 			socket.on('disconnect', function () { console.log('user', user, 'disconnected'); });
+
+
+			var auser = io.of('/user-auth');
+			auser.on('connection', function(socket){
+			  console.log('someone connected'):
+			});
+			auser.emit('hi', 'everyone!');
 		});
 
 	};

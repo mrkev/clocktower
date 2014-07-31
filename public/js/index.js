@@ -3,9 +3,14 @@
 
 /* Controllers */
 
-app.controller('AppController', function ($scope, socket) {
+app.controller('AppController', function ($scope, socket, localStorageService) {
 
-  $scope.model = new TowerModel();
+  var savedata = localStorageService.get('clocktower-savedata');
+  console.log('SAVEDATA', savedata);
+
+  $scope.model = savedata ? new TowerModel(savedata) : new TowerModel();
+  $scope.currentCalendar = $scope.model.calendars[$scope.model.term];
+
 
   $scope.loadData = function (txt) {
     var newmodel = new TowerModel(txt);
@@ -13,24 +18,38 @@ app.controller('AppController', function ($scope, socket) {
     $scope.currentCalendar = $scope.model.calendars[$scope.model.term];
   };
 
+
   $scope.$watch('model.savedata', function(newVal) {
       $scope.savedata = JSON.stringify(newVal);
+      if ($scope._app.saveToBrowser) {
+        localStorageService.set('clocktower-savedata', $scope.savedata);
+        console.dir('Saved', savedata);
+      }
   }, true);
 
 
-  $scope.currentCalendar = $scope.model.calendars[$scope.model.term];
-
   $scope._app = {
     editCalendar  : false,
-    saveToText    : true,
-    saveToBroswer : false,
+    saveToText    : false,
+    saveToBrowser : true,
     saveToLogin   : false,
   };
+
+  $scope.changeSaveToBrowser = function (dosave) {
+    if (dosave) {
+      localStorageService.set('clocktower-savedata', $scope.savedata);
+    }
+
+    else {
+      localStorageService.remove('clocktower-savedata');
+    }
+  }
 
   // Utility function
   $scope.contains = function (element, array) {
     return array.find(element) > -1;
   };
+
 
   socket.on('connect',   function ()  {});
   socket.on('user info', function (info) { this.user = info; });
@@ -38,55 +57,6 @@ app.controller('AppController', function ($scope, socket) {
 });
 
 
-
-
-
-app.controller('SearchController', function ($scope, socket, $sce) {
-
-  // Start with no search results
-  $scope.model.searchResults = [];
-
-  /**
-   * Sends search query to the server. Response will come
-   * with 'search results' message.
-   */
-  $scope.doSearch = function () {
-    socket.emit('search query', 
-      { query : $scope.searchText, 
-        term  : $scope.model.term
-      });
-  };
-
-
-  /**
-   * Recieved search results.
-   *
-   * Set them on the model, highlight the search text and trust as HTML
-   * so angular can display it. 
-   */
-  socket.on('search results', function (results) {
-
-    $scope.model.searchResults = results;
-    $scope.model.searchResults.forEach(function (result) {
-        
-        result.display_html = $sce.trustAsHtml
-                                  (result.display_html.replace
-                                      ($scope.searchText, '<strong>$&</strong>'));
-    });
-  });
-
-
-
-// HMMMMMMMMMMMMMMMMMMM 
-
-  /**
-   * Add course to current term.
-   * @param {[type]} course [description]
-   */
-  $scope.addCourse = function (course) {
-    $scope.currentCalendar.addCourse(course);
-  };
-});
 
 
 
@@ -179,8 +149,8 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
 
   $scope.isSelectedSection = function (section) {
     return $scope.currentCalendar
-      .selectedSections[section.course_id][section.ssr_component] 
-              == section.class_number;
+      .selectedSections[section.course_id][section.ssr_component] == 
+                                                          section.class_number;
   };
 
   $scope.ssrCompenentsOfType = function (course, ssr) {
@@ -201,7 +171,7 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
   // Drawing.
   //   
   
-  $scope.initCalendar = function () { console.log('init'); };
+  $scope.initCalendar = function () {};
 
   var width = 721;
   var height = 1392;
@@ -225,7 +195,6 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
   };
 
   $scope.getTop  = function (time) {
-    //console.log(midnightMillis(time));
     return (midnightMillis(time) / 86400000 /* Milliseconds in a day */) * height >> 0;
   };
 
@@ -269,7 +238,6 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
        */
       start : function (event, ui) {
         // Show sections with same SSR.
-        console.log('Event?', event, 'UI', ui);
         $scope.dragging_section = JSON.parse(event.target.dataset.section);
         $scope.$apply();
       },
@@ -335,5 +303,5 @@ app.directive('onFinishRender', function ($timeout) {
         });
       }
     }
-  }
+  };
 });

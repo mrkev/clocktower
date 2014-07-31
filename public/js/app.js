@@ -3,7 +3,7 @@
 
 /* App */
 
-var app = angular.module('Tower', []);
+var app = angular.module('Tower', ['LocalStorageModule']);
 
 // From: http://www.html5rocks.com/en/tutorials/frameworks/angular-websockets/
 // Wraps Socket.io on Anglular. Makes sure to check state and update on 
@@ -17,7 +17,7 @@ app.factory('socket', function ($rootScope) {
   var socket = io.connect();
   return {
     on: function (eventName, callback) {
-      socket.on(eventName, function () {  
+      socket.on(eventName, function () {
         var args = arguments;
         $rootScope.$apply(function () {
           callback.apply(socket, args);
