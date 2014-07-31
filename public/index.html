@@ -5,7 +5,8 @@
 
     <!-- 1. Load platform.js for polyfill support. -->
     <script src="/bower_components/platform/platform.js"></script>
-    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="//code.jquery.com/jquery-2.1.1.js"></script>
+    <script src="/bower_components/jquery-ui/jquery-ui.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
 
     <link rel="import"
@@ -22,10 +23,6 @@
 
     <link rel="stylesheet" href="/bower_components/normalize-css/normalize.css">
     <link rel="stylesheet" href="css/main.css">
-    <style>
-
-
-    </style>
 
   </head>
   <body unresolved ng-app="Tower">
@@ -54,8 +51,9 @@
                 <span 
                   ng-bind-html="result.display_html">
                 </span> 
-                <button 
-                  ng-click='addCourse(result.course)'>
+                <button
+                  ng-show='currentCalendar.courses[result.course.course_id] === undefined' 
+                  ng-click='addCourse(result.course)'> +
                 </button>
               </li>
 
@@ -71,7 +69,8 @@
 
         -->
 
-        <div class="card wide" ng-controller="CalendarController as vladimirovna">
+        <div class="card wide" 
+          ng-controller="CalendarController as vladimirovna" ng-init="initCalendar()">
           <div class="card_content" layout horizontal>
             
             <div class="sidebar">
@@ -114,49 +113,134 @@
             </div>
             
 
-            <!-- Acutal calendar. Should eventaully be drawn -->
-            <div id="calendar" flex>
-              <ul class='full_height'>
+            <!-- Acutal calendar. -->
+            <div id="lolcalendar" flex>
+              <style>
                 
-                <li ng-repeat="course in model.calendars[model.term].selectedCourses">
+                #lolcalendar {
+                  background: #eee;
+                  position: relative;
+                  overflow: scroll;
+                }
+
+
+                .gathering {
+                  position: absolute;
+                  cursor: pointer;
+                  padding: 6px 12px 6px 12px;
+                  text-align: center;
+                  box-sizing: border-box;
+                  border-radius: 2px;
+                  font-size: 10px;
+                }
+
+                .selected.oneof .gathering:hover  {
+                    border: 2px solid gray;
+                    padding: 4px 10px 4px 10px;
+                }
+
+                .selected .gathering{
+                  background: white;
+                  font-weight: bold;
+                }
+
+                .section {
+                  width : 0px;
+                  height: 0px;
+                  position: absolute;
+                }
+
+                .calendar_background {
+                  position: absolute;
+                  width: 100%;
+                  margin: 0px;
+                  padding: 0px;
+                }
+
+                .calendar_background li {
+                  list-style-type: none;
+                  height: 58px;
+                  width: 100%;
+                  text-align: right;
+                  padding: 12px 36px 12px 36px;
+                  box-sizing: border-box;
+                }
+
+
+                .draggable {
+                  z-index: 1;
+                }
+
+                .droppable {
+                  font-style: italic;
+                  border: 1px dashed gray;
+                }
+
+
+
+              </style>
+
+              <ul class='striped_list calendar_background'>
+                <li>0</li>
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+                <li>4</li>
+                <li>5</li>
+                <li>6</li>
+                <li>7</li>
+                <li>8</li>
+                <li>9</li>
+                <li>10</li>
+                <li>11</li>
+                <li>12</li>
+                <li>13</li>
+                <li>14</li>
+                <li>15</li>
+                <li>16</li>
+                <li>17</li>
+                <li>18</li>
+                <li>19</li>
+                <li>20</li>
+                <li>21</li>
+                <li>22</li>
+                <li>23</li>
+              </ul>
+
+              <div ng-repeat="course in model.calendars[model.term].selectedCourses">
 
                   <span ng-show="willQueryInfo(course)">
                     Loading course...
                   </span>
-
-                  <span ng-hide="willQueryInfo(course)">
-                    Taking Course <strong>{{course.subject_key}} {{course.catalog_number}} </strong> with sections: 
-                    
-                    <p 
+                    <div 
+                      class="section" 
+                      ng-hide="willQueryInfo(course) || 
+                              (!isSelectedSection(section) && 
+                              !(dragging_section.ssr_component === section.ssr_component &&
+                                dragging_section.course_id === section.course_id))"
                       ng-repeat="section in course.sections"
-                      ng-class="{selected: isSelectedSection(section)}"
-                      ng-click="selectSection(section)">
+                      ng-class="{selected: isSelectedSection(section),
+                                 oneof : ssrCompenentsOfType(course, section.ssr_component) > 1}">
 
-                      <button 
-                        ng-hide="isSelectedSection(section)"
-                        ng-click="selectSection(section)"></button>
+                      <div 
+                        ng-repeat="weekday in section.meeting.meeting_pattern"
+                        class = "gathering"
+                        data-section="{{section}}"
+                        ng-class = "{'draggable' :  isSelectedSection(section),
+                                     'droppable' : !isSelectedSection(section)}"
+                        style ="width  : {{getWidth()}}px;
+                                height : {{getHeight(section.meeting.start_time, section.meeting.end_time)}}px;
+                                left   : {{getLeft(weekday)}}px;
+                                top    : {{getTop(section.meeting.start_time)}}px;"
+                        on-finish-render>
 
-                      {{section.ssr_component}} {{section.class_section}} ({{section.class_number}}) 
-                      
-                      which meets at {{section.meeting.facility_description}} from {{section.meeting.start_time}} to {{section.meeting.end_time}} on {{section.meeting.meeting_pattern}}. </br>
+                      {{course.subject_key}} {{course.catalog_number}} {{section.ssr_component}} <br/>
+                      {{section.meeting.start_time}} - {{section.meeting.end_time}} <br/>
+                      {{section.class_number}}
 
-                      It is taught by:
-
-                      <span
-                      ng-show="section.meeting.instructors"
-                      ng-repeat="instructor in section.meeting.instructors">
-                      {{instructor}}</span>
-
-                      <span ng-hide="section.meeting.instructors">
-                        TBD
-                      </span>
-
-                    </p>
-                    
-                  </span>
-
-                </li>
-              </ul>
+                      </div>
+                </div>
+              </div>
             </div>
 
           </div>
@@ -189,7 +273,7 @@
             <paper-dialog heading="This is your data." transition="paper-dialog-transition-center">
 
               <p>To save your calendars just copy it to a safe place. To load previous
-                calendars just copy it here. <strong>This will override everything
+                calendars just paste it here. <strong>This will override everything
                 currently in the application.</strong></p> <br/>
               
               <textarea
@@ -212,7 +296,33 @@
               function toggleDialog(transition) {
                 var dialog = document.querySelector('paper-dialog[transition=' + transition + ']');
                 dialog.toggle();
-              }
+              }              
+            </script>
+
+            <script>
+              //$(function() {
+              //  $(".draggable").draggable({
+              //    revert: "valid"
+              //  });
+              //  $(".draggable2").draggable({
+              //    revert: "invalid"
+              //  });
+  
+              //  $(".droppable").droppable({
+              //    activeClass: "ui-state-default",
+              //    hoverClass: "ui-state-hover",
+              //    drop: function(event, ui) {
+              //      console.log('hi')
+              //    }
+              //  });
+  
+              //  $("#lolcalendar").on("mousedown", ".gathering", function(event) {
+              //    console.log('attatch')
+              //    return true;
+              //    //$(this).draggable();
+              //  });
+  
+              //});
             </script>
           </div>
         </div>
@@ -224,6 +334,7 @@
     <script src="js/calendar.js"></script>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="/bower_components/datejs/build/date.js"></script>
 
     <script src="js/app.js"></script>
     <script src-"js/services.js"></script>

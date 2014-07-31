@@ -92,10 +92,6 @@ input {
   overflow: scroll;
 }
 
-.selected {
-  color: gray;
-}
-
 textarea.data {
   font-size: 7px;
 }
@@ -127,3 +123,4 @@ paper-dialog paper-button {
 paper-button[autofocus] {
   color: #4285f4;
 }
+
