@@ -102,7 +102,7 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
    * @return {boolean}       Whether information was queried or not
    */
   $scope.willQueryInfo = function (course) {
-    console.log('willqueryinfo-', typeof course !== 'object');
+    //console.log('willqueryinfo-', typeof course !== 'object');
 
     if (typeof course === 'object') return false;
     socket.emit('get course info', course);
@@ -171,7 +171,9 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
   // Drawing.
   //   
   
-  $scope.initCalendar = function () {};
+  $scope.initCalendar = function () {
+    $('#lolcalendar').scrollTop(58 * 7);
+  };
 
   var width = 721;
   var height = 1392;
@@ -206,12 +208,38 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
     return width / Object.keys(table).length >> 0;
   };
 
+  $scope.getBackgroundColor = function (section) {
+    if ($scope.isSelectedSection(section)) return $scope.currentCalendar.colorForCourse[section.course_id];
+    return 'none';
+  }
+
+  $scope.getBorderColor = function (section) {
+    return Spectra($scope.currentCalendar.colorForCourse[section.course_id])
+                  .darken(26).rgbaString();
+  }
+
+
+  $scope.darken = function (color) {
+    return Spectra(color).darken(38);
+  }
+
+  $scope.lighten = function (color) {
+    var color = Spectra(color).lighten(38);
+    console.log(color, 'cause its lighter')
+    return color.rgbaString();
+  }
 
   // Drag, drop.
   // 
 
 
   $scope.dragging_section = null;
+
+  $scope.isDraggingCompatibleSection = function (section) {
+    return $scope.dragging_section ? 
+           ($scope.dragging_section.ssr_component === section.ssr_component &&
+            $scope.dragging_section.course_id     === section.course_id) : false;
+  }
 
   var applyJQueryDrag = function () {
     $('.draggable').draggable({

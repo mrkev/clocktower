@@ -1,5 +1,5 @@
 'use strict';
-/* global $, console */
+/* global $, console, Spectra */
 
 /**
  * Calendar class. Instance represents a single calendar as built by the user.
@@ -68,9 +68,8 @@ var Calendar = (function () {
       }
     });
 
+    self.colorForCourse = sm ? sm.colorForCourse : {};
   }
-
-
 
   /////////////////////////// Course Management ////////////////////////////////
 
@@ -138,6 +137,18 @@ var Calendar = (function () {
     });
 
     this._selectedSections[course.course_id] = selsect;
+
+
+    // Assign a color to the course
+    if (!this.colorForCourse[course.course_id]) {
+      var color = Spectra({ 
+        h: Math.random() * 360 >> 0, 
+        s: 0.42, 
+        v: 0.75 + Math.random() / 14.28      // 0.75 -> ~.82
+      });
+
+      this.colorForCourse[course.course_id] = color.fadeOut(10).rgbaString();
+    }
 
     return true;
   };
@@ -217,7 +228,8 @@ var Calendar = (function () {
   	return {
       courses : this.courses,
       _selectedCourses  : this._selectedCourses,
-      _selectedSections : this._selectedSections
+      _selectedSections : this._selectedSections,
+      colorForCourse : this.colorForCourse
     };
   };
 

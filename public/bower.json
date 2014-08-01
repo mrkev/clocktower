@@ -22,6 +22,7 @@
     "jquery": "~2.1.1",
     "datejs": "~1.0.0-rc1",
     "jquery-ui": "~1.11.0",
-    "angular-local-storage": "~0.0.5"
+    "angular-local-storage": "~0.0.5",
+    "spectrajs": "~0.2.3"
   }
 }

@@ -1,0 +1,39 @@
+{
+  "name": "spectra",
+  "description": "Javascript color manipulation library.",
+  "version": "0.2.3",
+  "author": "Aakash Patel <aakpat6@gmail.com>",
+  "main": "spectra.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/avp/spectra.git"
+  },
+  "bugs": {
+    "url": "https://github.com/avp/spectra/issues"
+  },
+  "scripts": {
+    "test": "grunt travis"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-uglify": "~0.4.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-karma": "~0.8.2",
+    "grunt-karma-coveralls": "~2.5.0",
+    "karma": "~0.12.16",
+    "karma-script-launcher": "~0.1.0",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-jasmine": "~0.2.2",
+    "karma-coffee-preprocessor": "~0.2.1",
+    "karma-requirejs": "~0.2.1",
+    "karma-phantomjs-launcher": "~0.1.2",
+    "karma-coverage": "~0.2.0",
+    "requirejs": "~2.1.10"
+  },
+  "files": [
+    "spectra.js",
+    "spectra.min.js",
+    "LICENSE"
+  ]
+}

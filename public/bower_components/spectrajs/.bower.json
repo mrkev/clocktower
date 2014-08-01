@@ -1,0 +1,39 @@
+{
+  "name": "spectra-color",
+  "main": "spectra.js",
+  "homepage": "https://github.com/avp/spectra",
+  "keywords": [
+    "color",
+    "javascript",
+    "js",
+    "rgb",
+    "hsl",
+    "hsv",
+    "color manipulation",
+    "spectra"
+  ],
+  "authors": [
+    "Aakash Patel <aakpat6@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "index.html",
+    "*.sublime-*"
+  ],
+  "version": "0.2.3",
+  "_release": "0.2.3",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.2.3",
+    "commit": "50750feae8952f570f150e6b3d36ae4dbccb8490"
+  },
+  "_source": "git://github.com/avp/spectra.git",
+  "_target": "~0.2.3",
+  "_originalSource": "spectrajs",
+  "_direct": true
+}

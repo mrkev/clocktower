@@ -82,13 +82,15 @@
               <!-- List of courses in the current calendar -->
               <ul id="calendar_courses" class="striped_list src_list">
                 
-                <li ng-repeat="course in model.calendars[model.term].courses">
+                <li 
+                  ng-repeat="course in model.calendars[model.term].courses"
+                  style="border-left-color: {{getBorderColor(course.sections[0]);}}">
 
-                  <span ng-show="willQueryInfo(course)">
+                  <span ng-if="willQueryInfo(course)">
                     Loading course...
                   </span>
 
-                  <span ng-hide="willQueryInfo(course)">
+                  <span ng-if="!willQueryInfo(course)">
                     {{course.subject_key}} {{course.catalog_number}} 
                   </span>
                   
@@ -132,12 +134,14 @@
                   text-align: center;
                   box-sizing: border-box;
                   border-radius: 2px;
+                  border-width: 1px;
+                  border-style: solid;
                   font-size: 10px;
                 }
 
                 .selected.oneof .gathering:hover  {
                     border: 2px solid gray;
-                    padding: 4px 10px 4px 10px;
+                    padding: 5px 11px 5px 11px;
                 }
 
                 .selected .gathering{
@@ -210,15 +214,12 @@
 
               <div ng-repeat="course in model.calendars[model.term].selectedCourses">
 
-                  <span ng-show="willQueryInfo(course)">
-                    Loading course...
-                  </span>
+                  <span if-show="!willQueryInfo(course)">
                     <div 
                       class="section" 
                       ng-hide="willQueryInfo(course) || 
                               (!isSelectedSection(section) && 
-                              !(dragging_section.ssr_component === section.ssr_component &&
-                                dragging_section.course_id === section.course_id))"
+                               !isDraggingCompatibleSection(section))"
                       ng-repeat="section in course.sections"
                       ng-class="{selected: isSelectedSection(section),
                                  oneof : ssrCompenentsOfType(course, section.ssr_component) > 1}">
@@ -229,10 +230,15 @@
                         data-section="{{section}}"
                         ng-class = "{'draggable' :  isSelectedSection(section),
                                      'droppable' : !isSelectedSection(section)}"
+                        
                         style ="width  : {{getWidth()}}px;
                                 height : {{getHeight(section.meeting.start_time, section.meeting.end_time)}}px;
                                 left   : {{getLeft(weekday)}}px;
-                                top    : {{getTop(section.meeting.start_time)}}px;"
+                                top    : {{getTop(section.meeting.start_time)}}px;
+
+                                background-color: {{getBackgroundColor(section)}};
+                                border-color: {{getBorderColor(section)}};"
+                        
                         on-finish-render>
 
                       {{course.subject_key}} {{course.catalog_number}} {{section.ssr_component}} <br/>
@@ -240,7 +246,8 @@
                       {{section.class_number}}
 
                       </div>
-                </div>
+                    </div>
+                  </span>
               </div>
             </div>
 
@@ -344,6 +351,7 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/bower_components/datejs/build/date.js"></script>
+    <script src="/bower_components/spectrajs/spectra.min.js"></script>
 
     <script src="js/app.js"></script>
     <script src-"js/services.js"></script>

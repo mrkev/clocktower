@@ -9,6 +9,10 @@ form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 
 	overflow: scroll;
 }
 
+#calendar_courses li {
+  border-left-style: solid;
+  border-left-size: 2px;
+}
 
 #search_results {
 	width: 100%;
