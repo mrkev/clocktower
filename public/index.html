@@ -3,6 +3,9 @@
   <head>
     <title>Tower</title>
 
+    <link rel="stylesheet" href="/bower_components/normalize-css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+
     <!-- 1. Load platform.js for polyfill support. -->
     <script src="/bower_components/platform/platform.js"></script>
     <script src="//code.jquery.com/jquery-2.1.1.js"></script>
@@ -21,9 +24,6 @@
           href="/bower_components/paper-dialog/paper-dialog-transition.html">
     <link rel="import"
           href="/bower_components/paper-dialog/paper-dialog.html">
-
-    <link rel="stylesheet" href="/bower_components/normalize-css/normalize.css">
-    <link rel="stylesheet" href="css/main.css">
 
   </head>
   <body unresolved ng-app="Tower">
@@ -118,73 +118,6 @@
 
             <!-- Acutal calendar. -->
             <div id="lolcalendar" flex>
-              <style>
-                
-                #lolcalendar {
-                  background: #eee;
-                  position: relative;
-                  overflow: scroll;
-                }
-
-
-                .gathering {
-                  position: absolute;
-                  cursor: pointer;
-                  padding: 6px 12px 6px 12px;
-                  text-align: center;
-                  box-sizing: border-box;
-                  border-radius: 2px;
-                  border-width: 1px;
-                  border-style: solid;
-                  font-size: 10px;
-                }
-
-                .selected.oneof .gathering:hover  {
-                    border: 2px solid gray;
-                    padding: 5px 11px 5px 11px;
-                }
-
-                .selected .gathering{
-                  background: white;
-                  font-weight: bold;
-                }
-
-                .section {
-                  width : 0px;
-                  height: 0px;
-                  position: absolute;
-                }
-
-                .calendar_background {
-                  position: absolute;
-                  width: 100%;
-                  margin: 0px;
-                  padding: 0px;
-                }
-
-                .calendar_background li {
-                  list-style-type: none;
-                  height: 58px;
-                  width: 100%;
-                  text-align: right;
-                  padding: 12px 36px 12px 36px;
-                  box-sizing: border-box;
-                }
-
-
-                .draggable {
-                  z-index: 1;
-                }
-
-                .droppable {
-                  font-style: italic;
-                  border: 1px dashed gray;
-                }
-
-
-
-              </style>
-
               <ul class='striped_list calendar_background'>
                 <li>0</li>
                 <li>1</li>
@@ -211,7 +144,11 @@
                 <li>22</li>
                 <li>23</li>
               </ul>
-
+              <style>
+                .colliding {
+                  font-family: monospace;
+                }
+              </style>
               <div ng-repeat="course in model.calendars[model.term].selectedCourses">
 
                   <span if-show="!willQueryInfo(course)">
@@ -222,7 +159,8 @@
                                !isDraggingCompatibleSection(section))"
                       ng-repeat="section in course.sections"
                       ng-class="{selected: isSelectedSection(section),
-                                 oneof : ssrCompenentsOfType(course, section.ssr_component) > 1}">
+                                 oneof : ssrCompenentsOfType(course, section.ssr_component) > 1,
+                                 colliding : isColliding(section)}">
 
                       <div 
                         ng-repeat="weekday in section.meeting.meeting_pattern"
@@ -240,6 +178,8 @@
                                 border-color: {{getBorderColor(section)}};"
                         
                         on-finish-render>
+
+                        {{model.collisionDB[section.class_number].length}}
 
                       {{course.subject_key}} {{course.catalog_number}} {{section.ssr_component}} <br/>
                       {{section.meeting.start_time}} - {{section.meeting.end_time}} <br/>
@@ -283,6 +223,18 @@
 
 
               I'll login. Store my stuff there: <input type="checkbox" ng-model="_app.saveToLogin" disabled> <br/>
+
+              <form 
+                id="search_form" 
+                ng-submit="doLogin(credentials)"
+                ng-show="_app.saveToLogin"
+                novalidate>
+
+                <input type="text" placeholder="NetID" ng-model="credentials.username">
+                <input type="password" placeholder="Password" ng-model="credentials.password">
+                <input type="submit">
+                
+              </form>
             </span>
             
 
@@ -306,6 +258,13 @@
               </paper-button>
 
             </paper-dialog>
+
+            <paper-button 
+              label="Lolcatz" 
+              ng-click="checkCollisions()"
+              affirmative 
+              autofocus>
+            </paper-button>
             
             
             <script>
@@ -316,6 +275,7 @@
             </script>
 
             <script>
+
               //$(function() {
               //  $(".draggable").draggable({
               //    revert: "valid"
@@ -346,6 +306,7 @@
       </div>
     </div>
 
+    <script src="js/YoDB.js"></script>
     <script src="js/tower.js"></script>
     <script src="js/calendar.js"></script>
 

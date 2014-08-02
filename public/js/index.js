@@ -1,5 +1,5 @@
 'use strict';
-/* global app, TowerModel, $, console*/
+/* global app, TowerModel, $, console, Spectra */
 
 /* Controllers */
 
@@ -31,7 +31,7 @@ app.controller('AppController', function ($scope, socket, localStorageService) {
   $scope._app = {
     editCalendar  : false,
     saveToText    : false,
-    saveToBrowser : true,
+    saveToBrowser : false,
     saveToLogin   : false,
   };
 
@@ -43,7 +43,7 @@ app.controller('AppController', function ($scope, socket, localStorageService) {
     else {
       localStorageService.remove('clocktower-savedata');
     }
-  }
+  };
 
   // Utility function
   $scope.contains = function (element, array) {
@@ -117,7 +117,7 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
    * @param  {Course} course the course to remove. (Compares using course.course_id)
    */
   $scope.removeCourse = function (course) {
-    $scope.currentCalendar.removeCourse(course.course_id);
+    $scope.model.removeCourse(course.course_id);
   };
 
   /**
@@ -125,7 +125,7 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
    * @param  {Course} course course to select.
    */
   $scope.selectCourse = function (course) {
-    $scope.currentCalendar.selectCourse(course.course_id);
+    $scope.model.selectCourse(course.course_id);
   };
 
   /**
@@ -133,7 +133,7 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
    * @param  {Course} course course to unselect.
    */
   $scope.unselectCourse = function (course) {
-    $scope.currentCalendar.unselectCourse(course.course_id);
+    $scope.model.unselectCourse(course.course_id);
   };
 
   $scope.isSelectedCourse = function (course) {
@@ -144,7 +144,7 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
   // Note: No unselectCourse becasue there must always be at least one section
   // of each type selected.
   $scope.selectSection = function (section) {
-    $scope.currentCalendar.selectSection(section);
+    $scope.model.selectSection(section);
   };
 
   $scope.isSelectedSection = function (section) {
@@ -153,6 +153,13 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
                                                           section.class_number;
   };
 
+  /**
+   * Returns number of sections with a given ssr component in a given course.
+   * @param  {Course} course The course to look in
+   * @param  {String} ssr    The ssr being looked for
+   * @return {Number}        How many courses with the given ssr are in the 
+   *                         course
+   */
   $scope.ssrCompenentsOfType = function (course, ssr) {
     return course.sections.map(function (x) {
       return x.ssr_component;
@@ -160,7 +167,6 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
       return prev + (curr === ssr ? 1 : 0);
     }, 0);
   };
-
 
 
   /////////////////////////////////
@@ -208,26 +214,35 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
     return width / Object.keys(table).length >> 0;
   };
 
-  $scope.getBackgroundColor = function (section) {
-    if ($scope.isSelectedSection(section)) return $scope.currentCalendar.colorForCourse[section.course_id];
-    return 'none';
+  $scope.isColliding = function (section) {
+    return $scope.isSelectedSection(section) && 
+    ($scope.model.collisionDB[section.class_number].length > 0);
   }
+
+  $scope.getBackgroundColor = function (section) {
+
+    if ($scope.isSelectedSection(section)) {
+      if ($scope.model.collisionDB[section.class_number].length > 0) return '#D11';
+
+      return $scope.currentCalendar.colorForCourse[section.course_id];
+    } 
+    return 'none';
+  };
 
   $scope.getBorderColor = function (section) {
     return Spectra($scope.currentCalendar.colorForCourse[section.course_id])
                   .darken(26).rgbaString();
-  }
-
+  };
 
   $scope.darken = function (color) {
     return Spectra(color).darken(38);
-  }
+  };
 
   $scope.lighten = function (color) {
     var color = Spectra(color).lighten(38);
-    console.log(color, 'cause its lighter')
+    console.log(color, 'cause its lighter');
     return color.rgbaString();
-  }
+  };
 
   // Drag, drop.
   // 
@@ -300,7 +315,7 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
         
         // Update angular.
         $scope.$apply(function () {
-          $scope.currentCalendar.selectSection(section);
+          $scope.selectSection(section);
         });
     
         // Reapply draggable and droppable after digest cycle.

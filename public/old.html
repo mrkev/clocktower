@@ -51,6 +51,14 @@
 
       socket.on('user info', function (info) { _user = info; });
 
+
+      // New tests.
+      var user_auth = io('/user-auth');
+
+      user_auth.on('connect', function (skt) {
+        console.log('hi')
+      });
+
     </script>
   </body>
 </html>

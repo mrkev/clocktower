@@ -5,11 +5,14 @@ var _		= require('underscore');
 var Q 		= require('q');
 var ES6P 	= require('es6-promise').Promise;
 var hash	= require('object-hash');
+
 /**
  * Whomping Willow v0.0.0
  *
- * Cuz it's glue code. And glue is sticky, like the Whomping Williow.
+ * Cuz it's glue code. And glue is sticky, like the Whomping Williow. Grabs JSON 
+ * from RedAPI and bends it to our needs. 
  * git+https://github.com/mrkev/node-progress.git ?? 
+ * 
  */
 module.exports = (function () {
 

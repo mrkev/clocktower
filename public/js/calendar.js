@@ -43,6 +43,17 @@ var Calendar = (function () {
      */
     self._selectedSections = sm ? sm._selectedSections : {};
 
+
+    /**
+     * Colors for each course, in format:
+     *
+     * { course_id : 'rgba'}
+     * 
+     * @type {Object}
+     */
+    self.colorForCourse = sm ? sm.colorForCourse : {};
+
+
     if (sm) {
       console.log('Loaded calendar from sm.');
       console.dir(this);
@@ -68,7 +79,36 @@ var Calendar = (function () {
       }
     });
 
-    self.colorForCourse = sm ? sm.colorForCourse : {};
+
+
+    // Not saved.
+    // This data could change if section changes. It should be rebuilt with the
+    // model.
+    
+    /**
+     * Array of sections that collide, with format:
+     *
+     * { class_number: [class_number, ...] }
+     * @type {Array}
+     */
+    self.collidingSections = {};
+
+
+    /**
+     * All sections in this calendar, with format
+     *
+     * { class_number : section, ... }
+     * 
+     * @type {Object}
+     */
+    //self._allSections = {};
+
+    //Object.defineProperty(this, 'allSections', {
+    //  get : function () {
+    //    return self.allSections;
+    //  }
+    //});
+
   }
 
   /////////////////////////// Course Management ////////////////////////////////
@@ -154,30 +194,38 @@ var Calendar = (function () {
   };
 
   /**
-   * Removes course from calendar. Removes all course selection and section
-   * selection associated with this course, too.
+   * Removes course from calendar. Removes course selection, section
+   * selection, and colour associated with this course, too.
    * @param  {String} course_id The ID of the course to remove.
    */
-  Calendar.prototype.removeCourse = function(course_id) {
-    
-            this.unselectCourse(course_id);
-    delete  this._selectedSections[course_id];
+  Calendar.prototype.removeCourse = function(cid) {
 
-    delete this.courses[course_id];
+    // Unselect course
+    this.unselectCourse(cid);
+
+    // Remove from selected sections database.
+    delete  this._selectedSections[cid];
+
+    // Remove from course database.
+    delete this.courses[cid];
+
+    // Remove from colours database.
+    delete this.colorForCourse[cid];
   };
 
 
   ////////////////////////// Section Management ////////////////////////////////
 
-  // We will use the acutal section object here. It should be there already,
-  // because sections come with the course information (we don't want to keep
-  // them because they might change).
+  // We will use the acutal section object here to set things up, because it 
+  // should be there already,but we wont save it; just it's class_number
+  // (we don't want to keep them because they might change).
 
   /**
    * Selects a section, and unselects any other selected section with the same
    * course_id and ssr_component.
    * @param  {Object'Section} section The section to select.
-   * @return {Boolean}        False if section wasn't selected. True otherwise.
+   * @return {String}                 Id of section previously selected, or 
+   *                                  false if no changes were made.
    */
   Calendar.prototype.selectSection = function(section) {
     var self = this;
@@ -191,7 +239,10 @@ var Calendar = (function () {
     if (csects[section.ssr_component] === section.class_number) return false;
 
     // Mark that section for its given ssr_component.
+    var prev = csects[section.ssr_component];
     csects[section.ssr_component] = section.class_number;
+
+    return prev;
 
   };
 
@@ -203,7 +254,7 @@ var Calendar = (function () {
    *   delete this._selectedSections[section.course_id][section.ssr_component];
    * };
    */
-  
+
 
 
   //////////////////////// Persistance Management //////////////////////////////
@@ -237,4 +288,4 @@ var Calendar = (function () {
 
 })();
 
-console.log('Calendar', Calendar);
+// console.log('Calendar', Calendar);

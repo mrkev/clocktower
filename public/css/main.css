@@ -128,3 +128,67 @@ paper-button[autofocus] {
   color: #4285f4;
 }
 
+
+
+
+/* Calendar stuff */
+#lolcalendar {
+  background: #eee;
+  position: relative;
+  overflow: scroll;
+}
+
+
+.gathering {
+  position: absolute;
+  cursor: pointer;
+  padding: 6px 12px 6px 12px;
+  text-align: center;
+  box-sizing: border-box;
+  border-radius: 2px;
+  border-width: 1px;
+  border-style: solid;
+  font-size: 10px;
+}
+
+.selected.oneof .gathering:hover  {
+    border: 2px solid gray;
+    padding: 5px 11px 5px 11px;
+}
+
+.selected .gathering{
+  background: white;
+  font-weight: bold;
+}
+
+.section {
+  width : 0px;
+  height: 0px;
+  position: absolute;
+}
+
+.calendar_background {
+  position: absolute;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+.calendar_background li {
+  list-style-type: none;
+  height: 58px;
+  width: 100%;
+  text-align: right;
+  padding: 12px 36px 12px 36px;
+  box-sizing: border-box;
+}
+
+
+.draggable {
+  z-index: 1;
+}
+
+.droppable {
+  font-style: italic;
+  border: 1px dashed gray;
+}

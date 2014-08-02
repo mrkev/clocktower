@@ -11,12 +11,14 @@
   "dependencies": {
     "es6-promise": "^1.0.0",
     "express": "^4.6.1",
+    "jsonwebtoken": "^0.4.1",
     "object-hash": "^0.3.0",
     "objeq": "^0.6.1",
     "progress": "*",
     "q": "^1.0.1",
     "request-promise": "0.0.4",
     "socket.io": "^1.0.6",
+    "socketio-jwt": "^2.3.4",
     "ugh": "^0.1.0",
     "underscore": "^1.6.0",
     "when": "^3.4.1"

@@ -35,4 +35,49 @@ app.factory('socket', function ($rootScope) {
       });
     }
   };
+})
+
+
+
+// Thanks to https://medium.com/opinionated-angularjs/techniques-for-authentication-in-angularjs-applications-7bbf0346acec
+// For the woderful insight on authentication with events/services/etc.
+.constant('AUTH_EVENTS', {
+  loginSuccess: 'auth-login-success',
+  loginFailed: 'auth-login-failed',
+  logoutSuccess: 'auth-logout-success',
+  sessionTimeout: 'auth-session-timeout',
+  notAuthenticated: 'auth-not-authenticated',
+  notAuthorized: 'auth-not-authorized'
+})
+
+
+.factory('AuthService', function ($http, Session) {
+  var authService = {};
+ 
+  authService.login = function (credentials) {
+    return $http
+      .post('/login', credentials)
+      .then(function (res) {
+        Session.create(res.id, res.user.id, res.user.role);
+        return res.user;
+      });
+  };
+
+  authService.isAuthenticated = function () {
+    return !!Session.userId;
+  };
+
+  return authService;
+})
+
+.service('Session', function () {
+  this.create = function (sessionId, userId, userRole) {
+    this.id = sessionId;
+    this.userId = userId;
+  };
+  this.destroy = function () {
+    this.id = null;
+    this.userId = null;
+  };
+  return this;
 });

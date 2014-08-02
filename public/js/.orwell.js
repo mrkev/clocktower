@@ -56,14 +56,4 @@ console.log('YoCal', YoCal);
 // 	    facility_description: "Uris Hall 262",
 // 	    meeting_pattern: "TR"
 // 	}
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-// 
+
