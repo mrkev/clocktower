@@ -346,6 +346,34 @@ var TowerModel = (function () {
     this.checkCollisions();
   };
 
+  Model.prototype.units = function() {
+    var self = this;
+
+    var min = 0, max = 0;
+    var units = Object.keys(this.calendars[this._term].selectedCourses)
+        
+        // Get unit ranges.
+        .map(function (x) {
+          var units = self.ydb.courses[x].units;
+          var dash  = units.indexOf('-');
+          return dash < 0 ? 
+            parseInt(units) : 
+            [parseInt(units.substr(0, dash)), parseInt(units.substr(dash + 1))];
+        })
+
+        // Add them up
+        .forEach(function (x) {
+
+          if (typeof x === 'number') {
+            min += x; max += x; return; }
+
+          min += x[0];
+          max += x[1];
+
+        });
+
+    return min === max ? min : min + '-' + max;
+  };
 
   /**
    * Who's gonna save the world tonight?

@@ -29,7 +29,13 @@ var YDB = (function () {
 			get : function () {
 				return self._sections;
 			}
-		});		
+		});
+
+		Object.defineProperty(this, 'courses', {
+			get : function () {
+				return self._courses;
+			}
+		});
 	}
 
 	YoDawgBased.prototype.pushCourse = function(course) {

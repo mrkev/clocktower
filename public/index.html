@@ -17,6 +17,9 @@
           href="/bower_components/polymer-ui-field/polymer-ui-field.html">
     <link rel="import" 
           href="/bower_components/polymer-ui-icon/polymer-ui-icon.html">
+    <link rel="import" 
+          href="/bower_components/polymer-ui-accordion/polymer-ui-accordion.html">
+
 
     <link rel="import"
           href="/bower_components/paper-button/paper-button.html">
@@ -44,21 +47,103 @@
               </select>
             </form>
 
+            <polymer-ui-accordion selected="0" flex>
+              <polymer-ui-collapsible ng-repeat="result in model.searchResults track by $index">
+                
+                <div class="polymer-ui-collapsible-header">
+                  <span ng-bind-html="result.display_html"></span>
 
-            <ul id="search_results" class="striped_list src_list" flex>
+                  <button
+                    ng-show='currentCalendar.courses[result.course.course_id] === undefined' 
+                    ng-click='addCourse(result.course, $event);'> +
+                  </button>
+                </div>
 
-              <li 
-                ng-repeat="result in model.searchResults track by $index">
-                <span 
-                  ng-bind-html="result.display_html">
-                </span> 
-                <button
-                  ng-show='currentCalendar.courses[result.course.course_id] === undefined' 
-                  ng-click='addCourse(result.course)'> +
-                </button>
-              </li>
+                <div class="content">
+                  {{result.course.units}} units.<br/>
+                  <p ng-if="result.course.crosslists.length > 0">
+                    Crosslisted as 
+                    <span ng-repeat="crosslist in result.course.crosslists">
+                      {{crosslist.subject_key}} {{crosslist.catalog_number}}
+                    </span>
+                  </p>
+                  <p ng-if="result.course.comeetings.length > 0">
+                    Comeets with
+                    <span ng-repeat="comeeting in result.course.comeetings">
+                      {{comeeting.subject_key}} {{comeeting.catalog_number}}
+                    </span>
+                  </p>
+                  
+                  {{result.course.sections.length}} sections. <br/>
+                  <ul>
+                    <li ng-repeat="section in result.course.sections"> {{section.ssr_component}} </li>
+                  </ul>
 
-            </ul> 
+                  Grading basis {{result.course.grading_basis}} <br/>
+                  <!-- {{result.course | json}} -->
+                  <p ng-if=""></p>
+                </div>
+              </polymer-ui-collapsible>
+            </polymer-ui-accordion>
+            <style>
+
+            polymer-ui-accordion {
+              overflow: scroll;
+            }
+
+            polymer-ui-accordion .content {
+              white-space: normal;
+              padding : 6px 12px;
+              border-top: solid 1px #eee;
+              margin-top: 3px;
+            }
+            polymer-ui-accordion polymer-ui-collapsible:nth-child(odd) {
+              background: #f5f5f5;
+            }
+
+            polymer-ui-accordion polymer-ui-collapsible:nth-child(odd) .content {
+              border-top: solid 1px white;
+
+            }
+
+
+            polymer-ui-accordion polymer-ui-collapsible  {
+              padding: 6px 12px; 
+            }
+
+
+            .polymer-ui-collapsible-header {
+
+              margin-bottom: 3px;
+              margin-top: 3px;
+
+              /* layout horizontal */
+              -ms-flex-direction: row;
+              -webkit-flex-direction: row;
+              flex-direction: row;
+              display: -ms-flexbox;
+              display: -webkit-flex;
+              display: flex;
+            }
+
+            .detail {
+              margin: 3px 8px 0px 6px;
+              color: #DDD;
+              mar
+            }
+            
+
+            .polymer-ui-collapsible-header span {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              
+               /*flex*/ 
+              -ms-flex: 1;
+              -webkit-flex: 1;
+              flex: 1;
+            }
+
+            </style>
           </div>
         </div>
 
@@ -74,13 +159,13 @@
           ng-controller="CalendarController as vladimirovna" ng-init="initCalendar()">
           <div class="card_content" layout horizontal>
             
-            <div class="sidebar">
+
+            <!-- Sidebar -->
+            <div class="sidebar" layout vertical>
               Edit: <input type="checkbox" ng-model="app._app.editCalendar">
 
 
-
-              <!-- List of courses in the current calendar -->
-              <ul id="calendar_courses" class="striped_list src_list">
+              <ul id="calendar_courses" class="striped_list src_list" flex>
                 
                 <li 
                   ng-repeat="course in model.calendars[model.term].courses"
@@ -95,6 +180,8 @@
                   </span>
                   
                   <span flex></span>
+
+                  <div class="detail">{{course.units}}</div>
 
                   <button 
                     ng-click="removeCourse(course)"
@@ -113,6 +200,23 @@
                 </li>
 
               </ul>
+
+              <style>
+              .center {
+                text-align: center;
+              }
+              .big {
+                font-size: 2.5em;
+              }
+              .small {
+                font-size: 0.9em;
+                color: #222;
+              }
+              </style>
+              <div class="center">
+                <span class='big'>{{model.units()}}</span>
+                <br/><span classs='small'>units.</span>
+              </div>
             </div>
             
 

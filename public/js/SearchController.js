@@ -46,7 +46,7 @@ app.controller('SearchController', function ($scope, socket, $sce) {
    * Add course to current term.
    * @param {[type]} course [description]
    */
-  $scope.addCourse = function (course) {
+  $scope.addCourse = function (course, $event) {
     $scope.model.addCourse(course);
   };
 });

@@ -82,7 +82,9 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
     });
   });
 
-
+  $scope.units = function () {
+    return Object.keys($scope.model.calendars[$scope.model.term].selectedCourses);
+  }
 
 
 
