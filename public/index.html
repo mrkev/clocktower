@@ -8,7 +8,7 @@
 
     <!-- 1. Load platform.js for polyfill support. -->
     <script src="/bower_components/platform/platform.js"></script>
-    <script src="//code.jquery.com/jquery-2.1.1.js"></script>
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="/bower_components/jquery-ui/jquery-ui.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
     <script src="/bower_components/angular-local-storage/angular-local-storage.min.js"></script>
@@ -149,45 +149,53 @@
                   font-family: monospace;
                 }
               </style>
+
+
+
               <div ng-repeat="course in model.calendars[model.term].selectedCourses">
 
-                  <span if-show="!willQueryInfo(course)">
-                    <div 
-                      class="section" 
-                      ng-hide="willQueryInfo(course) || 
-                              (!isSelectedSection(section) && 
-                               !isDraggingCompatibleSection(section))"
-                      ng-repeat="section in course.sections"
-                      ng-class="{selected: isSelectedSection(section),
-                                 oneof : ssrCompenentsOfType(course, section.ssr_component) > 1,
-                                 colliding : isColliding(section)}">
+                <span if-show="!willQueryInfo(course)">
+                    
+                  <div 
+                    class="section" 
+                    ng-hide="willQueryInfo(course) || 
+                            (!isSelectedSection(section) && 
+                             !isDraggingCompatibleSection(section))"
+                    ng-repeat="section in course.sections"
+                    ng-class="{selected: isSelectedSection(section),
+                               oneof : ssrCompenentsOfType(course, section.ssr_component) > 1,
+                               colliding : isColliding(section)}" on-finish-render>
 
-                      <div 
+                    <div 
                         ng-repeat="weekday in section.meeting.meeting_pattern"
                         class = "gathering"
                         data-section="{{section}}"
                         ng-class = "{'draggable' :  isSelectedSection(section),
                                      'droppable' : !isSelectedSection(section)}"
                         
-                        style ="width  : {{getWidth()}}px;
+                        style ="width  : {{getWidth(section)}}px;
                                 height : {{getHeight(section.meeting.start_time, section.meeting.end_time)}}px;
                                 left   : {{getLeft(weekday)}}px;
                                 top    : {{getTop(section.meeting.start_time)}}px;
 
                                 background-color: {{getBackgroundColor(section)}};
-                                border-color: {{getBorderColor(section)}};"
-                        
-                        on-finish-render>
+                                border-color: {{getBorderColor(section)}};">
 
-                        {{model.collisionDB[section.class_number].length}}
+                    {{course.subject_key}} <strong>{{course.catalog_number}}</strong> {{section.ssr_component}} 
+                    <br/>
+                    <span ng-if="isColliding(section)">
+                      {{model.collisionDB[section.class_number].length}} collisions
+                    </span>
+                    <span ng-if="!isColliding(section)">
+                      {{section.meeting.start_time}} - {{section.meeting.end_time}} 
+                    </span>
+                    <br/>
+                    {{section.class_number}} 
+            
 
-                      {{course.subject_key}} {{course.catalog_number}} {{section.ssr_component}} <br/>
-                      {{section.meeting.start_time}} - {{section.meeting.end_time}} <br/>
-                      {{section.class_number}}
-
-                      </div>
                     </div>
-                  </span>
+                  </div>
+                </span>
               </div>
             </div>
 
@@ -225,7 +233,7 @@
               I'll login. Store my stuff there: <input type="checkbox" ng-model="_app.saveToLogin" disabled> <br/>
 
               <form 
-                id="search_form" 
+                id="login_form" 
                 ng-submit="doLogin(credentials)"
                 ng-show="_app.saveToLogin"
                 novalidate>

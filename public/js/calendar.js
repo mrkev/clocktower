@@ -11,7 +11,7 @@ var Calendar = (function () {
   function Calendar (sm) {
     var self = this;
 
-    console.log('Initing calenddar to', sm);
+    console.log('Initing calendar to', sm);
 
 
 

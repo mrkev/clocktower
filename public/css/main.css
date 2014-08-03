@@ -142,7 +142,7 @@ paper-button[autofocus] {
 .gathering {
   position: absolute;
   cursor: pointer;
-  padding: 6px 12px 6px 12px;
+  padding: 4px 6px;
   text-align: center;
   box-sizing: border-box;
   border-radius: 2px;
@@ -151,9 +151,13 @@ paper-button[autofocus] {
   font-size: 10px;
 }
 
+.gathering strong {
+  font-size: 11px;
+}
+
 .selected.oneof .gathering:hover  {
     border: 2px solid gray;
-    padding: 5px 11px 5px 11px;
+    padding: 3px 4px;
 }
 
 .selected .gathering{

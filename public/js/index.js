@@ -4,13 +4,12 @@
 /* Controllers */
 
 app.controller('AppController', function ($scope, socket, localStorageService) {
-
+  // Load browser savedata.
   var savedata = localStorageService.get('clocktower-savedata');
-  console.log('SAVEDATA', savedata);
-
   $scope.model = savedata ? new TowerModel(savedata) : new TowerModel();
+  
+  // 
   $scope.currentCalendar = $scope.model.calendars[$scope.model.term];
-
 
   $scope.loadData = function (txt) {
     var newmodel = new TowerModel(txt);
@@ -18,20 +17,18 @@ app.controller('AppController', function ($scope, socket, localStorageService) {
     $scope.currentCalendar = $scope.model.calendars[$scope.model.term];
   };
 
-
-  $scope.$watch('model.savedata', function(newVal) {
+  $scope.$watch('model.savedata', function (newVal) {
       $scope.savedata = JSON.stringify(newVal);
       if ($scope._app.saveToBrowser) {
         localStorageService.set('clocktower-savedata', $scope.savedata);
         console.dir('Saved', savedata);
-      }
-  }, true);
-
+      } 
+    }, true);
 
   $scope._app = {
     editCalendar  : false,
     saveToText    : false,
-    saveToBrowser : false,
+    saveToBrowser : true,
     saveToLogin   : false,
   };
 
@@ -50,15 +47,8 @@ app.controller('AppController', function ($scope, socket, localStorageService) {
     return array.find(element) > -1;
   };
 
-
-  socket.on('connect',   function ()  {});
-  socket.on('user info', function (info) { this.user = info; });
-
+  socket.on('connect', function ()  {});
 });
-
-
-
-
 
 
 app.controller('CalendarController', function ($scope, socket, $timeout) {
@@ -66,17 +56,17 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
   /**
    * Query the courses we need.
    */
-  $scope.queryNeededCourses = function () {
-
-    var needed = 
-    Object.keys($scope.currentCalendar.courses).reduce
-    (function (prev, curr) {
-        if ($scope.currentCalendar.courses[curr] === null) return prev.push(curr);
-        return prev;
-      }, []);
-
-    socket.emit('get course info', needed);
-  };
+  // $scope.queryNeededCourses = function () {
+  // 
+  //   var needed = 
+  //   Object.keys($scope.currentCalendar.courses).reduce
+  //   (function (prev, curr) {
+  //       if ($scope.currentCalendar.courses[curr] === null) return prev.push(curr);
+  //       return prev;
+  //     }, []);
+  // 
+  //   socket.emit('get course info', needed);
+  // };
 
 
   /**
@@ -183,6 +173,7 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
 
   var width = 721;
   var height = 1392;
+  var margin = 6;
 
   var midnightMillis = function (time) {
     return  Date.parse('July 26th, 2014, ' + time) - 
@@ -197,9 +188,10 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
     'F' : 4,
     'S' : 5  };
 
-  
   $scope.getLeft = function (weekday) { 
-    return table[weekday] * $scope.getWidth(); 
+    
+    return (table[weekday] * width / Object.keys(table).length 
+            + margin / 2) >> 0;
   };
 
   $scope.getTop  = function (time) {
@@ -210,14 +202,19 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
     return $scope.getTop(end) - $scope.getTop(start);
   };
 
-  $scope.getWidth = function () {
-    return width / Object.keys(table).length >> 0;
+  $scope.getWidth = function (section) {
+    
+    var fw = width / Object.keys(table).length >> 0;
+    if ($scope.model.calendars[$scope.model.term]
+              .selectedSections[section.course_id][section.ssr_component] === 
+              section.class_number) fw = fw - margin;
+    return fw;
   };
 
   $scope.isColliding = function (section) {
     return $scope.isSelectedSection(section) && 
     ($scope.model.collisionDB[section.class_number].length > 0);
-  }
+  };
 
   $scope.getBackgroundColor = function (section) {
 
@@ -239,10 +236,11 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
   };
 
   $scope.lighten = function (color) {
-    var color = Spectra(color).lighten(38);
+    color = Spectra(color).lighten(38);
     console.log(color, 'cause its lighter');
     return color.rgbaString();
   };
+
 
   // Drag, drop.
   // 
@@ -254,7 +252,7 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
     return $scope.dragging_section ? 
            ($scope.dragging_section.ssr_component === section.ssr_component &&
             $scope.dragging_section.course_id     === section.course_id) : false;
-  }
+  };
 
   var applyJQueryDrag = function () {
     $('.draggable').draggable({
@@ -270,6 +268,8 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
        * @type {Number}
        */
       revertDuration : 0,
+
+      stack : '.draggable',
       
       /**
        * Show non-selected courses with the same ssr_component. This is done
@@ -320,7 +320,7 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
     
         // Reapply draggable and droppable after digest cycle.
         $timeout(function(){
-          applyJQueryDrag(); 
+          applyJQueryDrag();
         }); 
       } 
     });
@@ -331,8 +331,6 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
   $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
     applyJQueryDrag();
   });
-
-  
 });
 
 

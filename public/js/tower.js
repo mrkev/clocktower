@@ -65,24 +65,17 @@ var TowerModel = (function () {
      * Database of all collidable sections and collisions, in format:
      * 
      * { class_number : [section, section, ...], ...}
+     *
+     * Here just for the sake of reference, because it gets rebuilt on setTerm.
      * @type {Object}
      */
-    self._collisionDB = {};
-
-    Object.defineProperty(self._collisionDB, 'collidableSections', {
-      get : function () {
-        return Object.keys(self._collisionDB);
-      }
-    });
+    self._collisionDB = sm ? sm._collisionDB : {};
 
     Object.defineProperty(this, 'collisionDB', {
       get : function () {
         return self._collisionDB;
       }
     });
-
-
-
 
     Object.defineProperty(this, 'term', {
       get : function () { return self._term; },
@@ -101,6 +94,10 @@ var TowerModel = (function () {
    * Search 
    */
 
+  /**
+   * Sets search results. Builds search result objects.
+   * @param {[type]} course_array [description]
+   */
   Model.prototype.setSearchResults = function(course_array) {
 
     _searchResults = course_array.map(function (course) {
@@ -109,8 +106,7 @@ var TowerModel = (function () {
         display_html :  course.subject_key + ' ' +
                             course.catalog_number + ' ' +
                             course.title,
-            course : course,
-            added : false
+        course : course,
       };
     });
   };
@@ -331,8 +327,24 @@ var TowerModel = (function () {
   Model.prototype.setTerm = function(term) {
     // Should also change some default calendar?
     this._term = term;
-  };
 
+
+    // Reset colliding sections db. Add this term's selected courses
+
+    this._collisionDB = {};
+    for (var cid in this.calendars[this._term].selectedSections) {
+      for (var ssr in this.calendars[this._term].selectedSections[cid]) {
+
+        var scn1 = this.calendars[this._term]
+                       .selectedSections[cid][ssr];
+
+        this._collisionDB[scn1] = null;
+      }
+    }
+
+    // Check collisions. 
+    this.checkCollisions();
+  };
 
 
   /**
@@ -351,7 +363,8 @@ var TowerModel = (function () {
     return {
       _term : this._term,
       calendars : clnds,
-      ydb : this.ydb.save()
+      ydb : this.ydb.save(), // Will kill this once jit info fetching is supported
+      _collisionDB : this._collisionDB
     };
   };
 
@@ -359,14 +372,3 @@ var TowerModel = (function () {
 })();
 
 // console.log('TowerModel', TowerModel);
-
-
-// var User = (function () {
-//   
-//   function User (sm) {
-//     this.terms = {};
-//   }
-// 
-//   return User;
-// 
-// })();
