@@ -96,9 +96,20 @@ var TowerModel = (function () {
 
   /**
    * Sets search results. Builds search result objects.
-   * @param {[type]} course_array [description]
+   * @param {Array | Null | undefined} course_array 
+   *                 Array of result objects. Null flag means search in progress.
+   *                 Undefined flag means blank (nothing to display).
    */
   Model.prototype.setSearchResults = function(course_array) {
+    if (course_array === null) {
+      _searchResults = null;
+      return;
+    }
+
+    if (course_array === undefined) {
+      _searchResults = undefined;
+      return;
+    }
 
     _searchResults = course_array.map(function (course) {
 

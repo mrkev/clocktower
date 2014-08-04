@@ -47,6 +47,10 @@ app.controller('AppController', function ($scope, socket, localStorageService) {
     return array.find(element) > -1;
   };
 
+  $scope.listify = function (array) {
+    array.join(', ');
+  }
+
   socket.on('connect', function ()  {});
 });
 

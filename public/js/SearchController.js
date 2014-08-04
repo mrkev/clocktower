@@ -9,7 +9,7 @@
 app.controller('SearchController', function ($scope, socket, $sce) {
 
   // Start with no search results
-  $scope.model.searchResults = [];
+  $scope.model.searchResults = undefined;
 
   /**
    * Sends search query to the server. Response will come
@@ -20,6 +20,10 @@ app.controller('SearchController', function ($scope, socket, $sce) {
       { query : $scope.searchText, 
         term  : $scope.model.term
       });
+
+    console.log('YO');
+    // This will show the progress indicator.
+    $scope.model.searchResults = null;
   };
 
 

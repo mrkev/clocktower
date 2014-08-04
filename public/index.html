@@ -12,6 +12,7 @@
     <script src="/bower_components/jquery-ui/jquery-ui.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
     <script src="/bower_components/angular-local-storage/angular-local-storage.min.js"></script>
+    <script src="/bower_components/es6-promise/promise.min.js"></script>
 
     <link rel="import"
           href="/bower_components/polymer-ui-field/polymer-ui-field.html">
@@ -19,6 +20,8 @@
           href="/bower_components/polymer-ui-icon/polymer-ui-icon.html">
     <link rel="import" 
           href="/bower_components/polymer-ui-accordion/polymer-ui-accordion.html">
+    <link rel="import" href="/bower_components/core-tooltip/core-tooltip.html">
+
 
 
     <link rel="import"
@@ -46,14 +49,18 @@
                 <option value="FA14">Fall 2014</option>
               </select>
             </form>
+            
+            <span class="center" ng-hide="model.searchResults !== null"><progress></progress></span>
+            <span class="center very_light" ng-show="model.searchResults.length === 0">Nothing /:</span>
 
-            <polymer-ui-accordion selected="0" flex>
+            <polymer-ui-accordion flex>
               <polymer-ui-collapsible ng-repeat="result in model.searchResults track by $index">
                 
                 <div class="polymer-ui-collapsible-header">
                   <span ng-bind-html="result.display_html"></span>
 
                   <button
+                    class="btn btn-success btn-xs"
                     ng-show='currentCalendar.courses[result.course.course_id] === undefined' 
                     ng-click='addCourse(result.course, $event);'> +
                   </button>
@@ -71,79 +78,21 @@
                     Comeets with
                     <span ng-repeat="comeeting in result.course.comeetings">
                       {{comeeting.subject_key}} {{comeeting.catalog_number}}
+                      {{comeeting | json}}
                     </span>
                   </p>
                   
                   {{result.course.sections.length}} sections. <br/>
-                  <ul>
+                  <!-- <ul>
                     <li ng-repeat="section in result.course.sections"> {{section.ssr_component}} </li>
-                  </ul>
+                  </ul> -->
 
-                  Grading basis {{result.course.grading_basis}} <br/>
+                  Grading basis {{result.course.grading_basis}}. <br/>
                   <!-- {{result.course | json}} -->
                   <p ng-if=""></p>
                 </div>
               </polymer-ui-collapsible>
             </polymer-ui-accordion>
-            <style>
-
-            polymer-ui-accordion {
-              overflow: scroll;
-            }
-
-            polymer-ui-accordion .content {
-              white-space: normal;
-              padding : 6px 12px;
-              border-top: solid 1px #eee;
-              margin-top: 3px;
-            }
-            polymer-ui-accordion polymer-ui-collapsible:nth-child(odd) {
-              background: #f5f5f5;
-            }
-
-            polymer-ui-accordion polymer-ui-collapsible:nth-child(odd) .content {
-              border-top: solid 1px white;
-
-            }
-
-
-            polymer-ui-accordion polymer-ui-collapsible  {
-              padding: 6px 12px; 
-            }
-
-
-            .polymer-ui-collapsible-header {
-
-              margin-bottom: 3px;
-              margin-top: 3px;
-
-              /* layout horizontal */
-              -ms-flex-direction: row;
-              -webkit-flex-direction: row;
-              flex-direction: row;
-              display: -ms-flexbox;
-              display: -webkit-flex;
-              display: flex;
-            }
-
-            .detail {
-              margin: 3px 8px 0px 6px;
-              color: #DDD;
-              mar
-            }
-            
-
-            .polymer-ui-collapsible-header span {
-              overflow: hidden;
-              text-overflow: ellipsis;
-              
-               /*flex*/ 
-              -ms-flex: 1;
-              -webkit-flex: 1;
-              flex: 1;
-            }
-
-            </style>
           </div>
         </div>
 
@@ -162,7 +111,7 @@
 
             <!-- Sidebar -->
             <div class="sidebar" layout vertical>
-              Edit: <input type="checkbox" ng-model="app._app.editCalendar">
+              <span>Edit: <input type="checkbox" ng-model="app._app.editCalendar"></span>
 
 
               <ul id="calendar_courses" class="striped_list src_list" flex>
@@ -186,14 +135,17 @@
                   <button 
                     ng-click="removeCourse(course)"
                     ng-show="app._app.editCalendar"
+                    class="btn btn-danger btn-xs"
                     >-</button> <!-- Button to remove. Shown on edit mode -->
                   
-                  <div ng-hide='app._app.editCalendar'>
+                  <div ng-hide='app._app.editCalendar' class="monospace">
                     <button 
+                      class="btn btn-default btn-xs"
                       ng-hide  ="isSelectedCourse(course)"
                       ng-click ="selectCourse(course)">[ ]</button>
 
-                    <button
+                    <button 
+                      class="btn btn-primary btn-xs"
                       ng-show  ="isSelectedCourse(course)"
                       ng-click ="unselectCourse(course)">[x]</button>
                   </div>
@@ -211,6 +163,9 @@
               .small {
                 font-size: 0.9em;
                 color: #222;
+              }
+              .monospace {
+                font-family: monospace;
               }
               </style>
               <div class="center">
@@ -281,23 +236,33 @@
                                 height : {{getHeight(section.meeting.start_time, section.meeting.end_time)}}px;
                                 left   : {{getLeft(weekday)}}px;
                                 top    : {{getTop(section.meeting.start_time)}}px;
-
+  
                                 background-color: {{getBackgroundColor(section)}};
                                 border-color: {{getBorderColor(section)}};">
 
-                    {{course.subject_key}} <strong>{{course.catalog_number}}</strong> {{section.ssr_component}} 
-                    <br/>
-                    <span ng-if="isColliding(section)">
-                      {{model.collisionDB[section.class_number].length}} collisions
-                    </span>
-                    <span ng-if="!isColliding(section)">
-                      {{section.meeting.start_time}} - {{section.meeting.end_time}} 
-                    </span>
-                    <br/>
-                    {{section.class_number}} 
-            
+                      <core-tooltip position="bottom" noarrow>
+                        <div tip>
+                          {{course.title}}
+                          <p>{{section.meeting.instructors.join(', ')}}
+                           {{section.meeting.facility_description}}</p>
+
+                        </div>
+  
+                        {{course.subject_key}} <strong>{{course.catalog_number}}</strong> {{section.ssr_component}} 
+                        <br/>
+                        <span ng-if="isColliding(section)">
+                          {{model.collisionDB[section.class_number].length}} collisions
+                        </span>
+                        <span ng-if="!isColliding(section)">
+                          {{section.meeting.start_time}} - {{section.meeting.end_time}} 
+                        </span>
+                        <br/>
+                        {{section.class_number}} 
+              
+                      </core-tooltip>
 
                     </div>
+
                   </div>
                 </span>
               </div>

@@ -36,7 +36,8 @@ module.exports = (function () {
 
 			var results = objeq(squery + ' =~ title || ' + 
 								squery + ' =~ catalog_number || ' + 
-								squery + ' =~ subject_key')(data);
+								squery + ' =~ subject_key || ' +
+								squery + ' =~ course_id' )(data);
 
 			return results;
 		});
