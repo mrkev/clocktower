@@ -38,7 +38,8 @@ app.factory('socket', function ($rootScope) {
 })
 
 
-
+// UNUSED. Eventually will be used for web authentication.
+//
 // Thanks to https://medium.com/opinionated-angularjs/techniques-for-authentication-in-angularjs-applications-7bbf0346acec
 // For the woderful insight on authentication with events/services/etc.
 .constant('AUTH_EVENTS', {
@@ -71,7 +72,7 @@ app.factory('socket', function ($rootScope) {
 })
 
 .service('Session', function () {
-  this.create = function (sessionId, userId, userRole) {
+  this.create = function (sessionId, userId) {
     this.id = sessionId;
     this.userId = userId;
   };

@@ -1,12 +1,26 @@
 'use strict';
 /* global console */
 
+
+/**
+ * Yo DB. 
+ *
+ * Stores course information, indexed by class_number or course_id. The model 
+ * should contain no information: it should all be queried from here. This way
+ * the model can remain small and easily updatable when new roster information
+ * is available.
+ *
+ * Should I make one of these for each term or something? idk. 
+ * 
+ * @return {[type]} [description]
+ */
 var YDB = (function () {
 
 	function YoDawgBased (sm) {
 		var self = this;
 
 		if (sm) console.log('Initing the dawg to', sm);
+		
 		/**
 		 * All sections, in format:
 		 *
@@ -36,6 +50,7 @@ var YDB = (function () {
 				return self._courses;
 			}
 		});
+
 	}
 
 	YoDawgBased.prototype.pushCourse = function(course) {

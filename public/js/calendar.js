@@ -1,10 +1,10 @@
 'use strict';
-/* global $, console, Spectra */
+/* global $, console, Spectra, YDB */
 
 /**
  * Calendar class. Instance represents a single calendar as built by the user.
+ * Contains all information necessary to build a calendar.
  *
- * Courses will be populated manually by outside objects.
  */
 var Calendar = (function () {
   
@@ -13,9 +13,7 @@ var Calendar = (function () {
 
     console.log('Initing calendar to', sm);
 
-
-
-    // Course selection // 
+    // Persistent // 
     
     /**
      * Courses in this calendar. In format:
@@ -54,10 +52,39 @@ var Calendar = (function () {
     self.colorForCourse = sm ? sm.colorForCourse : {};
 
 
-    if (sm) {
-      console.log('Loaded calendar from sm.');
-      console.dir(this);
-    }
+    /**
+     * Custom sections (aka. custom events). For these we will store all
+     * the information here. They will be under the custom_events "course".
+     * 
+     * 
+     */
+
+    // Non-persistent //
+    
+    /**
+     * Database of course information. Calendar saves only ID's. We save all
+     * info here.
+     *
+     * Note. Information from here wont be deleted. However, this wont be
+     * persisted, and will be reloaded every time the user re-opens the 
+     * application, to only the courses acutally saved in the calendar.
+     * 
+     * @type {YDB}
+     */
+    self.ydb = sm ? new YDB(sm.ydb) : new YDB();
+
+    /*
+     * Database of all collidable sections and collisions, in format:
+     * 
+     * { class_number : [#, #, ...], ...}
+     * 
+     * Gets rebuilt every time a term/course selection is changed.
+     * 
+     * @type {Object}
+     */
+    self._collisionDB = {};
+
+
 
 
     Object.defineProperty(this, 'selectedCourses', {
@@ -79,36 +106,78 @@ var Calendar = (function () {
       }
     });
 
-
-
-    // Not saved.
-    // This data could change if section changes. It should be rebuilt with the
-    // model.
-    
     /**
-     * Array of sections that collide, with format:
-     *
-     * { class_number: [class_number, ...] }
-     * @type {Array}
+     * Will deprecate selectedSections. Returns all section information for all
+     * selected sections for selected courses.
+     * @return {Array'Section}   All selected sections.
      */
-    self.collidingSections = {};
+    Object.defineProperty(this, 'selSections', {
+      get : function () {
+
+        var results = [];
+        for (var cid in self._selectedSections) {
+          if (self._selectedCourses.indexOf(cid) < 0) continue;
+          for (var ssr in self._selectedSections[cid]) {
+            var s1 = self.ydb.sections[self.selectedSections[cid][ssr]];
+            console.log(s1.class_number);
+
+            results.push(s1);
+          }
+        }
+
+        return results;
+      }
+    });
+
+    Object.defineProperty(this, 'selCourses', {
+      get : function () {
+        var results = [];
+        for (var i = 0; i < self._selectedCourses.length; i++) {
+          results.push(self.ydb.courses[self._selectedCourses[i]]);
+        }
+
+        return results;
+      }
+    });
+
+    Object.defineProperty(this, 'units', {
+      get : function() {
+                
+        var min = 0, max = 0;
+
+        self._selectedCourses
+            
+            // Get unit ranges.
+            .map(function (x) {
+              var units = self.ydb.courses[x].units;
+              var dash  = units.indexOf('-');
+              return dash < 0 ? 
+                parseInt(units) : 
+                [parseInt(units.substr(0, dash)), parseInt(units.substr(dash + 1))];
+            })
+        
+            // Add them up
+            .forEach(function (x) {
+        
+              if (typeof x === 'number') {
+                min += x; max += x; return; }
+        
+              min += x[0];
+              max += x[1];
+        
+            });
+        
+        return min === max ? min : min + '-' + max;
+      }
+
+    });
 
 
-    /**
-     * All sections in this calendar, with format
-     *
-     * { class_number : section, ... }
-     * 
-     * @type {Object}
-     */
-    //self._allSections = {};
-
-    //Object.defineProperty(this, 'allSections', {
-    //  get : function () {
-    //    return self.allSections;
-    //  }
-    //});
-
+    if (sm) {
+      self.checkCollisions();
+      console.log('Loaded calendar from sm.');
+      console.dir(this);
+    }
   }
 
   /////////////////////////// Course Management ////////////////////////////////
@@ -129,8 +198,12 @@ var Calendar = (function () {
                                          // Should only be able to select
                                          // courses already in self.courses.
 
-    this._selectedCourses.push(cid); 
-    console.log('Sel YO', this._selectedCourses);
+    // Add to selected courses
+    this._selectedCourses.push(cid);
+
+    // Check collisions
+    this.checkCollisions();
+
     return true;
   };
 
@@ -147,8 +220,12 @@ var Calendar = (function () {
                                                 // we'll do nothing. This should
                                                 // be impossible though
 
+    // Remove from selected courses
     var index = this._selectedCourses.indexOf(cid);
     this._selectedCourses.splice(index, 1);
+
+    // Check collisions
+    this.checkCollisions();
     return true;
   };
 
@@ -166,8 +243,11 @@ var Calendar = (function () {
     if ($.inArray(course.course_id, 
         Object.keys(this.courses)) > 0) return false;
 
-    this.courses[course.course_id] = course;
+    // Add course information to ydb.
+    this.ydb.pushCourse(course);
 
+    // Might be deprecated by YDB.
+    this.courses[course.course_id] = course;
 
     // Select sections for each component.
     var selsect = {};
@@ -222,7 +302,7 @@ var Calendar = (function () {
 
   /**
    * Selects a section, and unselects any other selected section with the same
-   * course_id and ssr_component.
+   * course_id and ssr_component. Checks for collisions if changes did happen.
    * @param  {Object'Section} section The section to select.
    * @return {String}                 Id of section previously selected, or 
    *                                  false if no changes were made.
@@ -242,8 +322,16 @@ var Calendar = (function () {
     var prev = csects[section.ssr_component];
     csects[section.ssr_component] = section.class_number;
 
-    return prev;
+    // Collision
+    // 
+    
+    // Delete the previously selected section one from collision db
+    delete self._collisionDB[prev];
 
+    // Check for collisions.
+    this.checkCollisions();
+
+    return prev;
   };
 
   /**
@@ -255,9 +343,119 @@ var Calendar = (function () {
    * };
    */
 
+  /////////////////////////// Section Collisions ///////////////////////////////
+  
+  // * Could probably use performance tweaks, but should do for now //
+
+  /**
+   * Checks collisions between all selected sections for selected courses.
+   */
+  Calendar.prototype.checkCollisions = function() {
+    var self = this;
+
+    var selsect = self.selSections;
+    var selcrs  = self.selectedCourses;
+    // Test each selected section agaisnt the rest
+    self.selSections.forEach(function (s1) {
+     console.log(s1.course_id, 'LOL', self._selectedCourses, 
+       self._selectedCourses.indexOf(s1.course_id) < 0);
+     
+      if (self._selectedCourses.indexOf(s1.course_id) < 0) return;
+      self._collisionDB[s1.class_number] = testCollision(s1, selsect);
+    
+    });
+
+    console.log('CollisionDB', self._collisionDB);
+  };
+
+  /**
+   * Returns an array of all the collidable sections a given section collides
+   * with.
+   * @param  {Section} s1       Section to test for collisions against all 
+   *                            collidable sections 
+   * @return {Section | Array'Section}    
+   *                            Section or array array of sections to test for
+   *                            collision with s1.
+   */
+  var testCollision = function (s1, ss) {
+    if (Object.prototype.toString.call(ss) !== '[object Array]') ss = [ss];
+    
+    var results = [];
+    ss.forEach(function (s2) {
+
+      if (s1.class_number === s2.class_number) return;
+      
+      // console.log('   ', s1.class_number, 'vs', s2.class_number, '= collision?');
+      if (collide(s1, s2)) {
+        // console.log('YES');
+        results.push(s2);
+      }
+    });
+
+    return results;
+  };
+
+  /**
+   * Returns true if two given sections collide. False otherwise.
+   * @param  {Section} s1 Section to compare
+   * @param  {Section} s2 Section to compare
+   * @return {Boolean}    True if sections meetings collide. False otherwise.
+   */
+  var collide = function (s1, s2) {
+    
+    var match = matchingMeetingPattern(s1, s2);
+    if (match.length === 0) return false;
+
+    console.log('   Weedays match. Now times.');
+
+    var s1s = midnightMillis(s1.meeting.start_time);
+    var s1e = midnightMillis(s1.meeting.end_time);
+
+    var s2s = midnightMillis(s2.meeting.start_time);
+    var s2e = midnightMillis(s2.meeting.end_time);
+
+    return (s1s <= s2s && s2s <= s1e) || (s2s <= s1s && s1s <= s2e);
+  };
+
+  /**
+   * Returns the days at which meeting patterns for given sections match, or an 
+   * empty array if they dont.
+   * @param  {Section} s1     First section to compare
+   * @param  {Section} s2     Second section to compare
+   * @return {Array'String}   Array containing meeting pattern days at which 
+   *                          meeting patterns match
+   */
+  var matchingMeetingPattern = function (s1, s2) {
+
+     if (s1.meeting.meeting_pattern === s2.meeting.meeting_pattern) 
+         return s1.meeting.meeting_pattern.split('');
+
+     var regexp = /(M?)(T?)(W?)(R?)(F?)(S?)/;
+     
+     // Remove first element. Its the raw input. Keep only matched.
+     var m1 = regexp.exec(s2.meeting.meeting_pattern).slice(1);
+     var m2 = regexp.exec(s1.meeting.meeting_pattern).slice(1);
+
+     var res = [];
+     for (var i = m1.length - 1; i >= 0; i--) {
+       if (m1[i] !== '' && m2[i] !== '') res.push(m1[i]);
+     }
+
+     return res;
+  };
+
+  var midnightMillis = function (time) {
+    return  Date.parse('July 26th, 2014, ' + time) - 
+        Date.parse('July 26th, 2014, 12:00AM');
+  };
 
 
-  //////////////////////// Persistance Management //////////////////////////////
+  Calendar.prototype.collisionsFor = function(sctn) {
+    if (this._collisionDB[sctn.class_number] === undefined) return [];
+    return this._collisionDB[sctn.class_number];
+  };
+
+  /////////////////////////////// Persistance //////////////////////////////////
 
   /**
    * Returns all data necessary to rebuild Calendar. Calendar can be rebuilt by 
@@ -280,10 +478,15 @@ var Calendar = (function () {
       courses : this.courses,
       _selectedCourses  : this._selectedCourses,
       _selectedSections : this._selectedSections,
-      colorForCourse : this.colorForCourse
+      colorForCourse : this.colorForCourse,
+
+      // Will save it for now, but it should be loaded on-the fly, IMO.
+      ydb : this.ydb.save()
     };
   };
 
+  //////////////////////////////// Yo FRANKIE //////////////////////////////////
+  
   return Calendar;
 
 })();

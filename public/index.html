@@ -3,10 +3,11 @@
   <head>
     <title>Tower</title>
 
+    <!-- CSS -->
     <link rel="stylesheet" href="/bower_components/normalize-css/normalize.css">
     <link rel="stylesheet" href="css/main.css">
 
-    <!-- 1. Load platform.js for polyfill support. -->
+    <!-- Vendor JS -->
     <script src="/bower_components/platform/platform.js"></script>
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="/bower_components/jquery-ui/jquery-ui.js"></script>
@@ -14,27 +15,28 @@
     <script src="/bower_components/angular-local-storage/angular-local-storage.min.js"></script>
     <script src="/bower_components/es6-promise/promise.min.js"></script>
 
+    <!-- Polymer Components -->
     <link rel="import"
           href="/bower_components/polymer-ui-field/polymer-ui-field.html">
     <link rel="import" 
           href="/bower_components/polymer-ui-icon/polymer-ui-icon.html">
     <link rel="import" 
           href="/bower_components/polymer-ui-accordion/polymer-ui-accordion.html">
-    <link rel="import" href="/bower_components/core-tooltip/core-tooltip.html">
-
-
-
+    <link rel="import" 
+          href="/bower_components/core-tooltip/core-tooltip.html">
     <link rel="import"
           href="/bower_components/paper-button/paper-button.html">
     <link rel="import" 
           href="/bower_components/paper-dialog/paper-dialog-transition.html">
     <link rel="import"
           href="/bower_components/paper-dialog/paper-dialog.html">
-
   </head>
+
   <body unresolved ng-app="Tower">
   
       <div class="horizontal-container" start-justified horizontal ng-controller="AppController as app">
+
+        <!--  <search-card></search-card> -->
 
         <div class="card" ng-controller="SearchController as soyuz"> <!-- yuri  -->
           <div class="card_content" layout vertical>
@@ -97,12 +99,13 @@
         </div>
 
 
-
         <!-- 
 
         Middle Card. The Calendar.
 
         -->
+
+        <!--  <search-card></search-card> -->
 
         <div class="card wide" 
           ng-controller="CalendarController as vladimirovna" ng-init="initCalendar()">
@@ -112,6 +115,28 @@
             <!-- Sidebar -->
             <div class="sidebar" layout vertical>
               <span>Edit: <input type="checkbox" ng-model="app._app.editCalendar"></span>
+              <button class='btn' onClick='toggleDialog("newEventDialog");'>+</button>
+
+
+              <paper-dialog
+                id="newEventDialog"
+                heading="New Event." 
+                transition="paper-dialog-transition-center">
+
+                <p>Name: <input type="text" ng-model='newEvent.name'></p>
+                <p>Pattern: <input type="text" ng-model='newEvent.pattern'></p>
+                <p>Start time: <input type="text" ng-model='newEvent.start_time'></p>
+                <p>End time: <input type="text" ng-model='newEvent.end_time'></p>
+
+                <paper-button label="Cancel" affirmative></paper-button>
+                <paper-button 
+                  label="Done" 
+                  ng-click="addEvent()"
+                  affirmative 
+                  autofocus>
+                </paper-button>
+
+              </paper-dialog>
 
 
               <ul id="calendar_courses" class="striped_list src_list" flex>
@@ -133,21 +158,23 @@
                   <div class="detail">{{course.units}}</div>
 
                   <button 
-                    ng-click="removeCourse(course)"
+                    ng-click="calendar.removeCourse(course.course_id)"
                     ng-show="app._app.editCalendar"
                     class="btn btn-danger btn-xs"
-                    >-</button> <!-- Button to remove. Shown on edit mode -->
+                    >-</button>
                   
                   <div ng-hide='app._app.editCalendar' class="monospace">
                     <button 
                       class="btn btn-default btn-xs"
                       ng-hide  ="isSelectedCourse(course)"
-                      ng-click ="selectCourse(course)">[ ]</button>
+                      ng-click ="calendar.selectCourse(course.course_id)">[ ]</button>
 
                     <button 
                       class="btn btn-primary btn-xs"
+                      style="background-color : {{currentCalendar.colorForCourse[course.course_id]}};
+                             border-color : {{darken(currentCalendar.colorForCourse[course.course_id])}}"
                       ng-show  ="isSelectedCourse(course)"
-                      ng-click ="unselectCourse(course)">[x]</button>
+                      ng-click ="calendar.unselectCourse(course.course_id)">[x]</button>
                   </div>
                 </li>
 
@@ -168,10 +195,20 @@
                 font-family: monospace;
               }
               </style>
-              <div class="center">
-                <span class='big'>{{model.units()}}</span>
-                <br/><span classs='small'>units.</span>
-              </div>
+      
+              <!-- <div layout horizontal>
+                <div layout vertical flex>
+                  <paper-button label="Hello world"></paper-button>
+                  <paper-button label="Hello world"></paper-button>
+
+
+                </div> -->
+                <div class="center">
+                  <span class='big'>{{calendar.units}}</span>
+                  <br/><span classs='small'>total credits</span>
+                </div>
+              <!-- </div> -->
+
             </div>
             
 
@@ -285,7 +322,7 @@
                 <paper-button 
                   ng-show="_app.saveToText"
                   label="Load or save data" 
-                  onclick="toggleDialog('paper-dialog-transition-center')">
+                  onclick="toggleDialog('saveToTextDialog')">
                 </paper-button>
                 <br/>
               </span>
@@ -315,7 +352,10 @@
             </span>
             
 
-            <paper-dialog heading="This is your data." transition="paper-dialog-transition-center">
+            <paper-dialog 
+              id="saveToTextDialog"
+              heading="This is your data." 
+              transition="paper-dialog-transition-center">
 
               <p>To save your calendars just copy it to a safe place. To load previous
                 calendars just paste it here. <strong>This will override everything
@@ -345,8 +385,8 @@
             
             
             <script>
-              function toggleDialog(transition) {
-                var dialog = document.querySelector('paper-dialog[transition=' + transition + ']');
+              function toggleDialog(id) {
+                var dialog = document.querySelector('paper-dialog#' + id);
                 dialog.toggle();
               }              
             </script>
@@ -357,18 +397,24 @@
       </div>
     </div>
 
+    <!-- Classes -->
     <script src="js/YoDB.js"></script>
     <script src="js/tower.js"></script>
     <script src="js/calendar.js"></script>
 
+    <!-- Vendor -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="/bower_components/datejs/build/date.js"></script>
     <script src="/bower_components/spectrajs/spectra.min.js"></script>
 
+    <!-- Angular -->
     <script src="js/app.js"></script>
     <script src-"js/services.js"></script>
+
+    <!-- Angular Controllers -->
     <script src="js/SearchController.js"></script>
-    <script src="js/index.js" defer></script>
+    <script src="js/CalendarController.js"></script>
+    <script src="js/AppController.js" defer></script>
 
   </body>
 </html>

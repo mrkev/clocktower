@@ -21,7 +21,6 @@ app.controller('SearchController', function ($scope, socket, $sce) {
         term  : $scope.model.term
       });
 
-    console.log('YO');
     // This will show the progress indicator.
     $scope.model.searchResults = null;
   };
@@ -51,6 +50,6 @@ app.controller('SearchController', function ($scope, socket, $sce) {
    * @param {[type]} course [description]
    */
   $scope.addCourse = function (course, $event) {
-    $scope.model.addCourse(course);
+    $scope.model.calendars[$scope.model.term].addCourse(course);
   };
 });

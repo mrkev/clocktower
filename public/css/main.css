@@ -135,7 +135,8 @@ paper-button[autofocus] {
 #lolcalendar {
   background: #eee;
   position: relative;
-  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 
