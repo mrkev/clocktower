@@ -56,8 +56,9 @@ var Calendar = (function () {
      * Custom sections (aka. custom events). For these we will store all
      * the information here. They will be under the custom_events "course".
      * 
-     * 
      */
+
+    self.custom_events = sm ? sm.custom_events : {};
 
     // Non-persistent //
     
@@ -444,15 +445,36 @@ var Calendar = (function () {
      return res;
   };
 
+  /**
+   * Converts string time representation to milliseconds since midnight.
+   * @param  {String} time Time to convert
+   * @return {Number}      Milliseconds since midnight represented by the given 
+   *                       time.
+   */
   var midnightMillis = function (time) {
     return  Date.parse('July 26th, 2014, ' + time) - 
         Date.parse('July 26th, 2014, 12:00AM');
   };
 
-
+  /**
+   * Returns all the class_numbers a given section is known to collide with
+   * @param  {Section | String} sctn The section or class number to return
+   *                                 collisions for
+   * @return {array}                 Array of class_numbers of sections known
+   *                                 to collide with the given section
+   */
   Calendar.prototype.collisionsFor = function(sctn) {
-    if (this._collisionDB[sctn.class_number] === undefined) return [];
-    return this._collisionDB[sctn.class_number];
+    if (typeof sctn === 'object') sctn = sctn.class_number;
+    if (this._collisionDB[sctn] === undefined) return [];
+    return this._collisionDB[sctn];
+  };
+
+  /////////////////////////////// Cusstom Events ///////////////////////////////
+  
+  Calendar.prototype.addEvent = function(nevnt) {
+    var self = this;
+
+    self.custom_events.push(nevnt);
   };
 
   /////////////////////////////// Persistance //////////////////////////////////
@@ -475,13 +497,14 @@ var Calendar = (function () {
     // lets just keep the information in the saved user object.
 
   	return {
-      courses : this.courses,
+      courses           : this.courses,
       _selectedCourses  : this._selectedCourses,
       _selectedSections : this._selectedSections,
-      colorForCourse : this.colorForCourse,
+      colorForCourse    : this.colorForCourse,
+      custom_events     : this.custom_events,
 
       // Will save it for now, but it should be loaded on-the fly, IMO.
-      ydb : this.ydb.save()
+      ydb               : this.ydb.save()
     };
   };
 

@@ -47,7 +47,7 @@
                 <polymer-ui-icon icon="dialog"></polymer-ui-icon>
               </polymer-ui-field>
 
-              <select name="term" hidden          ng-model="searchTerm">
+              <select name="term" hidden ng-model="searchTerm">
                 <option value="FA14">Fall 2014</option>
               </select>
             </form>
@@ -115,7 +115,9 @@
             <!-- Sidebar -->
             <div class="sidebar" layout vertical>
               <span>Edit: <input type="checkbox" ng-model="app._app.editCalendar"></span>
-              <button class='btn' onClick='toggleDialog("newEventDialog");'>+</button>
+              <span>Pre-Enroll: <input type="checkbox" ng-model="showPreenroll"></span>
+
+              <!-- <button class='btn' onClick='toggleDialog("newEventDialog");'>+</button> -->
 
 
               <paper-dialog
@@ -130,7 +132,7 @@
 
                 <paper-button label="Cancel" affirmative></paper-button>
                 <paper-button 
-                  label="Done" 
+                  label="Add" 
                   ng-click="addEvent()"
                   affirmative 
                   autofocus>
@@ -194,6 +196,13 @@
               .monospace {
                 font-family: monospace;
               }
+
+              #lolpreenroll {
+                position: absolute;
+                height: 300px;
+              }
+
+
               </style>
       
               <!-- <div layout horizontal>
@@ -212,10 +221,65 @@
             </div>
             
 
+
+
+
+
+
+
+
+
+
+
+
+
+
             <!-- Acutal calendar. -->
             <div id="lolcalendar" flex>
-              <ul class='striped_list calendar_background'>
-                <li>0</li>
+
+              <!-- Pre-enroll -->
+              <div id="lolpreenroll" ng-if="showPreenroll">
+                <style>
+                #lolpreenroll table {
+                  width: 100%;
+                }
+
+                #lolpreenroll table td {
+                  width: 14.28%;
+                }
+
+                #lolpreenroll table .dim {
+                  color: #B3b3b3;
+                }
+                </style>
+                <h3>Pre-Enroll</h3>
+                <p>
+                  <table ng-repeat="course in model.calendars[model.term].selectedCourses">
+                    <tr>
+                      <td colspan='7'><strong>{{course.subject_key}} {{course.catalog_number}} {{course.title}}</strong></td>
+                    </tr>
+                    <tr ng-repeat="section in course.sections" ng-class="{dim : !isSelectedSection(section)}">
+                      <td><strong>{{section.class_number}}</strong></td>
+                      <td>{{section.ssr_component}}</td>
+                      <td>{{section.meeting.meeting_pattern}}</td>
+                      <td>{{section.meeting.start_time}}</td>
+                      <td>-</td>
+                      <td>{{section.meeting.start_time}}</td>
+                      <td><span ng-if='isColliding(section)'>   !!! collision !!!</span></td>
+                    </tr>
+                    <tr>
+                      <td colspan='7'> -- </td>
+                    </tr>
+                  </table>
+                </p>
+              </div>
+
+
+              <!-- Background -->
+              <ul 
+                class='striped_list calendar_background'
+                ng-class="{pulled_up: showPreenroll}">
+                <li>12AM</li>
                 <li>1</li>
                 <li>2</li>
                 <li>3</li>
@@ -227,28 +291,24 @@
                 <li>9</li>
                 <li>10</li>
                 <li>11</li>
-                <li>12</li>
-                <li>13</li>
-                <li>14</li>
-                <li>15</li>
-                <li>16</li>
-                <li>17</li>
-                <li>18</li>
-                <li>19</li>
-                <li>20</li>
-                <li>21</li>
-                <li>22</li>
-                <li>23</li>
+                <li>12PM</li>
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+                <li>4</li>
+                <li>5</li>
+                <li>6</li>
+                <li>7</li>
+                <li>8</li>
+                <li>9</li>
+                <li>10</li>
+                <li>11</li>
               </ul>
-              <style>
-                .colliding {
-                  font-family: monospace;
-                }
-              </style>
-
-
-
-              <div ng-repeat="course in model.calendars[model.term].selectedCourses">
+              
+              <!-- Calendar -->
+              <div 
+                ng-repeat="course in model.calendars[model.term].selectedCourses"
+                ng-class="{hidden: showPreenroll}">
 
                 <span if-show="!willQueryInfo(course)">
                     
@@ -288,7 +348,7 @@
                         {{course.subject_key}} <strong>{{course.catalog_number}}</strong> {{section.ssr_component}} 
                         <br/>
                         <span ng-if="isColliding(section)">
-                          {{model.collisionDB[section.class_number].length}} collisions
+                          {{calendar.collisionsFor(section.class_number).length}} collisions
                         </span>
                         <span ng-if="!isColliding(section)">
                           {{section.meeting.start_time}} - {{section.meeting.end_time}} 
@@ -303,7 +363,9 @@
                   </div>
                 </span>
               </div>
+
             </div>
+
 
           </div>
         </div>

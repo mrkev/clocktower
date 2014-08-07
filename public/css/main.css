@@ -177,6 +177,7 @@ paper-button[autofocus] {
   width: 100%;
   margin: 0px;
   padding: 0px;
+  transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
 }
 
 .calendar_background li {
@@ -187,6 +188,15 @@ paper-button[autofocus] {
   padding: 12px 36px 12px 36px;
   box-sizing: border-box;
 }
+
+#lolcalendar .pulled_up {
+  top: -200%;
+}
+
+#lolcalendar .hidden {
+  display: none;
+}
+
 
 
 .draggable {
@@ -258,8 +268,12 @@ polymer-ui-accordion polymer-ui-collapsible  {
   color: #dedede;
 }
 
+.colliding {
+  font-family: monospace;
+}
 
-/* From Bootstrap */
+
+/* From Bootstrap. */
 .btn {
   display: inline-block;
   padding: 6px 12px;

@@ -250,9 +250,19 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
   // Custom events.
   // 
   
+  $scope.newEvent = {};
   $scope.addEvent = function () {
-    
-  }
+    calendar.addEvent($scope.newEvent);
+    $scope.newEvent = {};
+  };
+
+
+
+  // Pre-enroll
+  // 
+  
+  $scope.showPreenroll = false;
+
 });
 
 
