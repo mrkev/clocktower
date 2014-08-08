@@ -69,13 +69,17 @@
                 </div>
 
                 <div class="content">
-                  {{result.course.units}} units.<br/>
+                  <!-- {{result.course.units}} units.<br/> -->
+
+                  <p ng-bind-html="result.course.class_description"></p>
+                  
                   <p ng-if="result.course.crosslists.length > 0">
                     Crosslisted as 
                     <span ng-repeat="crosslist in result.course.crosslists">
                       {{crosslist.subject_key}} {{crosslist.catalog_number}}
                     </span>
                   </p>
+
                   <p ng-if="result.course.comeetings.length > 0">
                     Comeets with
                     <span ng-repeat="comeeting in result.course.comeetings">
@@ -240,6 +244,9 @@
               <!-- Pre-enroll -->
               <div id="lolpreenroll" ng-if="showPreenroll">
                 <style>
+                #lolpreenroll {
+                  padding: 12px 6px;
+                }
                 #lolpreenroll table {
                   width: 100%;
                 }

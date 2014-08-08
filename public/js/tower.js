@@ -102,6 +102,8 @@ var TowerModel = (function () {
                             course.catalog_number + ' ' +
                             course.title,
         course : course,
+
+        body_html : course.class_description + ''
       };
     });
   };

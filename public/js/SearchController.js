@@ -40,6 +40,10 @@ app.controller('SearchController', function ($scope, socket, $sce) {
         result.display_html = $sce.trustAsHtml
                                   (result.display_html.replace
                                       ($scope.searchText, '<strong>$&</strong>'));
+
+        result.course.class_description = $sce.trustAsHtml
+                                  (result.body_html.replace
+                                      ($scope.searchText, '<strong>$&</strong>'));
     });
   });
 

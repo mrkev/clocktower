@@ -83,7 +83,6 @@ module.exports = (function () {
 				return getter.get(800)
 							 .then(_.flatten)
 							 .then(addHash)
-							 .then(addIDs)
 							 .then(self.cache.bind(self));
 	
 			});

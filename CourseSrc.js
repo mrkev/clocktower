@@ -34,10 +34,12 @@ module.exports = (function () {
 		return this.src.getDB().then(function (data) {
 			var squery = '\'' + query + '\'';
 
+
 			var results = objeq(squery + ' =~ title || ' + 
 								squery + ' =~ catalog_number || ' + 
 								squery + ' =~ subject_key || ' +
-								squery + ' =~ course_id' )(data);
+								squery + ' =~ course_id || ' +
+								squery + ' =~ class_description')(data);
 
 			return results;
 		});
