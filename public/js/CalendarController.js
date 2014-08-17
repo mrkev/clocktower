@@ -1,7 +1,7 @@
 'use strict';
 /* global app, $, Spectra */
 
-app.controller('CalendarController', function ($scope, socket, $timeout) {
+app.controller('CalendarController', function ($scope, socket, $timeout, $rootScope) {
   var calendar = $scope.model.calendars[$scope.model.term];
   $scope.calendar = calendar;
 
@@ -57,10 +57,10 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
   // 
 
   // Drawing.
-  //   
+  //   x
   
   $scope.initCalendar = function () {
-    $('#lolcalendar').scrollTop(58 * 7);
+    $('#lolcalendar').scrollTop($scope.model._app.calendarScrollTop);
   };
 
   var width = 721;
@@ -148,7 +148,7 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
 
   /**
    * Section being dragged.
-   * @type {Section}
+   * @type {Section?? course_id, ssr_component} 
    */
   $scope.dragging_section = null;
 
@@ -168,77 +168,92 @@ app.controller('CalendarController', function ($scope, socket, $timeout) {
    * Applies drag-drop from JQuery-UI to all pertinent classes.
    */
   var applyJQueryDrag = function () {
-    $('.draggable').draggable({
+    // $('.draggable').draggable({
 
-      /**
-       * Items go back to original position when released.
-       * @type {Boolean}
-       */
-      revert : true,
+    //   /**
+    //    * Items go back to original position when released.
+    //    * @type {Boolean}
+    //    */
+    //   revert : true,
 
-      /**
-       * No animation when items go back to original position.
-       * @type {Number}
-       */
-      revertDuration : 0,
+    //   /**
+    //    * No animation when items go back to original position.
+    //    * @type {Number}
+    //    */
+    //   revertDuration : 0,
 
-      stack : '.draggable',
+    //   // cursorAt: { top: 500, left: 50 },
+
+    //   stack : '.draggable',
       
-      /**
-       * Show non-selected courses with the same ssr_component. This is done
-       * by setting $scope.dragging_ssr to the ssr of the section of the
-       * gathering being dragged.
-       * @param  {[type]} event [description]
-       * @param  {[type]} ui    [description]
-       * @return {[type]}       [description]
-       */
-      start : function (event, ui) {
-        // Show sections with same SSR.
-        $scope.dragging_section = JSON.parse(event.target.dataset.section);
-        $scope.$apply();
-      },
+    //   /**
+    //    * Show non-selected courses with the same ssr_component. This is done
+    //    * by setting $scope.dragging_ssr to the ssr of the section of the
+    //    * gathering being dragged.
+    //    * @param  {[type]} event [description]
+    //    * @param  {[type]} ui    [description]
+    //    * @return {[type]}       [description]
+    //    */
+    //   start : function (event, ui) {
+    //     // Show sections with same SSR.
+    //     $scope.dragging_section = JSON.parse(event.target.dataset.section);
+    //     $scope.$apply();
+    //   },
 
-      /**
-       * [end description]
-       * @return {[type]} [description]
-       */
-      stop : function () {
-        $scope.dragging_section = null;
-        $scope.$apply();
-      }
-    });
+    //   *
+    //    * [end description]
+    //    * @return {[type]} [description]
+       
+    //   stop : function () {
+    //     $scope.dragging_section = null;
+    //     $scope.$apply();
+    //   }
+    // });
 
 
 
-    $('.droppable').droppable({ 
+    // $('.droppable').droppable({ 
 
-      /**
-       * Triggered when a draggable is dropped on top of this droppable. Selects
-       * this droppable's section. Updates angular and re-applies jquery 
-       * dragging.
-       *
-       * ui.draggable[0] = html element being dragged. Why is it an array?
-       * event.target    = element on which drop was recieved.
-       */
-      drop : function (event, ui) {
+    //   /**
+    //    * Triggered when a draggable is dropped on top of this droppable. Selects
+    //    * this droppable's section. Updates angular and re-applies jquery 
+    //    * dragging.
+    //    *
+    //    * ui.draggable[0] = html element being dragged. Why is it an array?
+    //    * event.target    = element on which drop was recieved.
+    //    */
+    //   drop : function (event, ui) {
 
-        // Select the section
-        var section = JSON.parse(event.target.dataset.section);
+    //     // Select the section
+    //     var section = JSON.parse(event.target.dataset.section);
         
         
-        // Update angular.
-        $scope.$apply(function () {
-          $scope.selectSection(section);
-        });
+    //     // Update angular.
+    //     $scope.$apply(function () {
+    //       $scope.selectSection(section);
+    //     });
     
-        // Reapply draggable and droppable after digest cycle.
-        $timeout(function(){
-          applyJQueryDrag();
-        }); 
-      } 
-    });
+    //     // Reapply draggable and droppable after digest cycle.
+    //     $timeout(function(){
+    //       applyJQueryDrag();
+    //     }); 
+    //   } 
+    // });
   };
 
+  var reg = /(^.*)-(.*)/;
+  $rootScope.$on('ANGULAR_DRAG_START', function (event, sendChannel) {
+      var matches = reg.exec(sendChannel);
+      $scope.dragging_section = {course_id : matches[1], ssr_component: matches[2] };
+      $scope.$apply();
+
+  });
+
+  $rootScope.$on('ANGULAR_DRAG_END', function (event, sendChannel) {
+      $scope.$apply(function () {
+        $scope.dragging_section = null;
+      });
+  });
 
   // Whenever a repeat is done applies jquery dragging goodness.
   $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {

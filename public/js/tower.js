@@ -51,6 +51,7 @@ var TowerModel = (function () {
       saveToText    : false,
       saveToBrowser : true,
       saveToLogin   : false,
+      calendarScrollTop : 58 * 7
     };
 
     /**

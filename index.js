@@ -1,11 +1,11 @@
 'use strict';
 /* global require, console, process */
 
-
-
 var Server 		= require('./Server');
 var CourseSrc 	= require('./CourseSrc');
 var Clockwork	= require('./Clockwork');
+
+var config = require('./config.js');
 						  
 var srver = new Server();  
 var cdbll = new CourseSrc(require('./searchdb'));
@@ -13,6 +13,8 @@ var clock = new Clockwork(srver);
 
 // run this madness.
 // 
+
+console.log('What time is it?');
 
 cdbll
 
@@ -26,8 +28,8 @@ cdbll
 
 	// Start the server.
 	.then(function () {
-		return srver.listen(process.env.OPENSHIFT_NODEJS_IP   || '127.0.0.1', 
-					 		process.env.OPENSHIFT_NODEJS_PORT || 3000);
+		return srver.listen(config.server_ip, 
+							config.server_port);
 	})
 
 	// Trace any errors
@@ -36,7 +38,7 @@ cdbll
 
 	// Partay
 	.then(function () {
-		console.log('Partay lalasdkfjla running dawg yo whatsup homie looool');
+		console.log('Adventure time.');
 	});
 
 

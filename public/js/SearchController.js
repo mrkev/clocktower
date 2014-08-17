@@ -35,6 +35,7 @@ app.controller('SearchController', function ($scope, socket, $sce) {
   socket.on('search results', function (results) {
 
     $scope.model.searchResults = results;
+    console.log('now the html part');
     $scope.model.searchResults.forEach(function (result) {
         
         result.display_html = $sce.trustAsHtml
@@ -45,6 +46,8 @@ app.controller('SearchController', function ($scope, socket, $sce) {
                                   (result.body_html.replace
                                       ($scope.searchText, '<strong>$&</strong>'));
     });
+
+    console.log('done');
   });
 
   // HMMMMMMMMMMMMMMMMMMM 
@@ -55,5 +58,6 @@ app.controller('SearchController', function ($scope, socket, $sce) {
    */
   $scope.addCourse = function (course, $event) {
     $scope.model.calendars[$scope.model.term].addCourse(course);
+    $event.stopPropagation();
   };
 });

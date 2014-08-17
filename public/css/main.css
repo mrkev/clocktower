@@ -14,6 +14,9 @@ form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 
   border-left-size: 2px;
 }
 
+#search_form {
+  margin-bottom: 6px;
+}
 #search_results {
 	width: 100%;
 }
@@ -30,6 +33,24 @@ form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 
 	display: flex;
 
 }
+
+/* Layout */
+
+.flex {
+  -ms-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+}
+
+.layout.horizontal {
+  -ms-flex-direction: row;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
 #search_results li span {
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -150,6 +171,8 @@ paper-button[autofocus] {
   border-width: 1px;
   border-style: solid;
   font-size: 10px;
+  line-height: 1.25em;
+  overflow: hidden;
 }
 
 .gathering strong {
@@ -178,6 +201,8 @@ paper-button[autofocus] {
   margin: 0px;
   padding: 0px;
   transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+  font-size: 1.1em;
+  font-weight: 300;
 }
 
 .calendar_background li {
@@ -187,14 +212,19 @@ paper-button[autofocus] {
   text-align: right;
   padding: 12px 36px 12px 36px;
   box-sizing: border-box;
+  color: #bebebe;
 }
 
 #lolcalendar .pulled_up {
-  top: -200%;
+  left: 100%;
+}
+
+.transition-all {
+  transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
 }
 
 #lolcalendar .hidden {
-  display: none;
+  opacity: 0%;
 }
 
 
@@ -206,30 +236,57 @@ paper-button[autofocus] {
 .droppable {
   font-style: italic;
   border: 1px dashed gray;
+  /*background: rgba(255, 255, 255, .5);*/
 }
 
-polymer-ui-accordion {
-  overflow: scroll;
+accordion {
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
-polymer-ui-accordion .content {
+accordion .content {
   white-space: normal;
   padding : 6px 12px;
   border-top: solid 1px #eee;
   margin-top: 3px;
 }
-polymer-ui-accordion polymer-ui-collapsible:nth-child(odd) {
+
+.panel-default>.panel-heading {
+  background-color: transparent;
+}
+
+.panel-collapse {
+  padding-bottom: 12px;
+}
+
+h4 {
+  font-weight: 400;
+}
+.panel.panel-default.ng-isolate-scope {
+  margin: 0px;
+  border-color: transparent;
+}
+
+accordion .panel:nth-child(odd) {
   background: #f5f5f5;
 }
 
-polymer-ui-accordion polymer-ui-collapsible:nth-child(odd) .content {
+/*accordion accordion-heading:nth-child(odd) .content {
   border-top: solid 1px white;
+}*/
 
-}
+@media print{
+    .no-print{
+        display: none;
+    }
 
+    * {
+      display: none !important;
+    }
 
-polymer-ui-accordion polymer-ui-collapsible  {
-  padding: 6px 12px; 
+    .print {
+      display: block !important;
+    }
 }
 
 
@@ -250,7 +307,6 @@ polymer-ui-accordion polymer-ui-collapsible  {
 .detail {
   margin: 3px 8px 0px 6px;
   color: #DDD;
-  mar
 }
 
 
@@ -274,7 +330,7 @@ polymer-ui-accordion polymer-ui-collapsible  {
 
 
 /* From Bootstrap. */
-.btn {
+/*.btn {
   display: inline-block;
   padding: 6px 12px;
   margin-bottom: 0;
@@ -633,4 +689,4 @@ input[type="submit"].btn-block,
 input[type="reset"].btn-block,
 input[type="button"].btn-block {
   width: 100%;
-}
+}*/

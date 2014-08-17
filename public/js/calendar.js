@@ -120,7 +120,7 @@ var Calendar = (function () {
           if (self._selectedCourses.indexOf(cid) < 0) continue;
           for (var ssr in self._selectedSections[cid]) {
             var s1 = self.ydb.sections[self.selectedSections[cid][ssr]];
-            console.log(s1.class_number);
+            // console.log(s1.class_number);
 
             results.push(s1);
           }
@@ -324,7 +324,7 @@ var Calendar = (function () {
     csects[section.ssr_component] = section.class_number;
 
     // Collision
-    // 
+    // TODO: Don't add courses without meetings/no meeting data.
     
     // Delete the previously selected section one from collision db
     delete self._collisionDB[prev];
@@ -355,18 +355,18 @@ var Calendar = (function () {
     var self = this;
 
     var selsect = self.selSections;
-    var selcrs  = self.selectedCourses;
+    // var selcrs  = self.selectedCourses;
     // Test each selected section agaisnt the rest
     self.selSections.forEach(function (s1) {
-     console.log(s1.course_id, 'LOL', self._selectedCourses, 
-       self._selectedCourses.indexOf(s1.course_id) < 0);
+     // console.log(s1.course_id, 'LOL', self._selectedCourses, 
+     //   self._selectedCourses.indexOf(s1.course_id) < 0);
      
       if (self._selectedCourses.indexOf(s1.course_id) < 0) return;
       self._collisionDB[s1.class_number] = testCollision(s1, selsect);
     
     });
 
-    console.log('CollisionDB', self._collisionDB);
+    // console.log('CollisionDB', self._collisionDB);
   };
 
   /**
@@ -407,7 +407,7 @@ var Calendar = (function () {
     var match = matchingMeetingPattern(s1, s2);
     if (match.length === 0) return false;
 
-    console.log('   Weedays match. Now times.');
+    // console.log('   Weedays match. Now times.');
 
     var s1s = midnightMillis(s1.meeting.start_time);
     var s1e = midnightMillis(s1.meeting.end_time);

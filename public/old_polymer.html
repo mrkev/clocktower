@@ -7,13 +7,11 @@
     <link rel="stylesheet" href="/bower_components/normalize-css/normalize.css">
     <link rel="stylesheet" href='/bower_components/bootstrap/dist/css/bootstrap.min.css'>
     <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/fp.css">
 
-
-    <!-- Vendor JS 
-    <script src="/bower_components/platform/platform.js"></script>-->
+    <!-- Vendor JS -->
+    <script src="/bower_components/platform/platform.js"></script>
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/bower_components/jquery-ui/jquery-ui.js"></script>
     <script src="/bower_components/angular/angular.min.js"></script>
     <script src="/bower_components/angular-local-storage/angular-local-storage.min.js"></script>
     <script src="/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
@@ -37,7 +35,7 @@
           href="/bower_components/paper-dialog/paper-dialog.html">
   </head>
 
-  <body ng-app="Tower" black>
+  <body unresolved ng-app="Tower">
   
       <div class="horizontal-container" start-justified horizontal ng-controller="AppController as app">
 
@@ -46,13 +44,11 @@
         <div class="card" ng-controller="SearchController as soyuz"> <!-- yuri  -->
           <div class="card_content" layout vertical>
             <form id="search_form" ng-submit="doSearch()">
-              
-              <div class='ui_field' layout horizontal>
+              <polymer-ui-field>
                 <polymer-ui-icon icon="search" ></polymer-ui-icon>
-                <div class='search icon' icon="search"></div>
-                <input class="nice" placeholder="Search"  ng-model="searchText" flex>
-                <div class='dialog icon'></div>
-              </div>
+                <input placeholder="Search" flex  ng-model="searchText">
+                <polymer-ui-icon icon="dialog"></polymer-ui-icon>
+              </polymer-ui-field>
 
               <select name="term" hidden ng-model="searchTerm">
                 <option value="FA14">Fall 2014</option>
@@ -100,16 +96,12 @@
               position: relative;
             }
 
-            .actionable:hover {
-              text-decoration: underline;
-            }
-
             </style>
-            <accordion class="flex">
+            <accordion flex>
               <accordion-group ng-repeat="result in model.searchResults track by $index">
                   
                   <accordion-heading>
-                      <span class="ellipsis actionable flex" ng-bind-html="result.display_html"></span>
+                      <span class="ellipsis" ng-bind-html="result.display_html" flex></span>
 
                       <button
                         class="btn btn-success btn-xs pull-right"
@@ -169,9 +161,31 @@
               <span>Edit: <input type="checkbox" ng-model="app._app.editCalendar"></span>
               <span>Pre-Enroll: <input type="checkbox" ng-model="showPreenroll"></span>
 
+              <!-- <button class='btn' onClick='toggleDialog("newEventDialog");'>+</button> -->
 
 
-              <ul id="calendar_courses" class="striped_list src_list flex">
+              <paper-dialog
+                id="newEventDialog"
+                heading="New Event." 
+                transition="paper-dialog-transition-center">
+
+                <p>Name: <input type="text" ng-model='newEvent.name'></p>
+                <p>Pattern: <input type="text" ng-model='newEvent.pattern'></p>
+                <p>Start time: <input type="text" ng-model='newEvent.start_time'></p>
+                <p>End time: <input type="text" ng-model='newEvent.end_time'></p>
+
+                <paper-button label="Cancel" affirmative></paper-button>
+                <paper-button 
+                  label="Add" 
+                  ng-click="addEvent()"
+                  affirmative 
+                  autofocus>
+                </paper-button>
+
+              </paper-dialog>
+
+
+              <ul id="calendar_courses" class="striped_list src_list" flex>
                 
                 <li 
                   ng-repeat="course in model.calendars[model.term].courses"
@@ -185,7 +199,7 @@
                     {{course.subject_key}} {{course.catalog_number}} 
                   </span>
                   
-                  <span class="flex"></span>
+                  <span flex></span>
 
                   <div class="detail">{{course.units}}</div>
 
@@ -265,7 +279,7 @@
 
 
             <!-- Acutal calendar. -->
-            <div id="lolcalendar" class='flex'>
+            <div id="lolcalendar" flex>
 
               <!-- Pre-enroll -->
               <div 
@@ -350,53 +364,31 @@
                 ng-class="{hidden: showPreenroll}">
 
                 <span if-show="!willQueryInfo(course)">
-
-                  <style>
-                  .on-drag-enter{
-                      background-color : #aaaaaa;
-                      border-color: green;
-
-                  }
-
-                  </style>
-                  <!-- ng-hide="willQueryInfo(course) || 
-                          (!isSelectedSection(section) && 
-                           !isDraggingCompatibleSection(section))" -->
-
+                    
                   <div 
                     class="section" 
-
                     ng-hide="willQueryInfo(course) || 
-                              (!isSelectedSection(section) && 
-                               !isDraggingCompatibleSection(section))"
+                            (!isSelectedSection(section) && 
+                             !isDraggingCompatibleSection(section))"
                     ng-repeat="section in course.sections"
                     ng-class="{selected: isSelectedSection(section),
                                oneof : ssrCompenentsOfType(course, section.ssr_component) > 1,
                                colliding : isColliding(section)}" on-finish-render>
 
-                    <!-- 
-                        ondragstart="console.log('dragging yo');"
-                        ondragend='console.log("stopping the drag, yo");' -->
                     <div 
                         ng-repeat="weekday in section.meeting.meeting_pattern"
-                        class = "gathering"
+                        class="gathering"
                         data-section="{{section}}"
-                        ui-draggable="{{isSelectedSection(section)}}"
-                        drag="section"
-                        ng-class = "{'draggable' :  isSelectedSection(section),
-                                     'droppable' : !isSelectedSection(section)}"
-
-                        drag-channel="{{section.course_id}}-{{section.ssr_component}}"
-                        drop-channel="{{section.course_id}}-{{section.ssr_component}}"
-                        ui-on-drop="selectSection(section)"
+                        ng-class="{'draggable' :  isSelectedSection(section),
+                                   'droppable' : !isSelectedSection(section)}"
                         
-                        style ="width  : {{getWidth(section)}}px;
-                                height : {{getHeight(section.meeting.start_time, section.meeting.end_time)}}px;
-                                left   : {{getLeft(weekday)}}px;
-                                top    : {{getTop(section.meeting.start_time)}}px;
+                        style="width  : {{getWidth(section)}}px;
+                               height : {{getHeight(section.meeting.start_time, section.meeting.end_time)}}px;
+                               left   : {{getLeft(weekday)}}px;
+                               top    : {{getTop(section.meeting.start_time)}}px;
   
-                                background-color: {{getBackgroundColor(section)}};
-                                border-color: {{getBorderColor(section)}};">
+                               background-color: {{getBackgroundColor(section)}};
+                               border-color: {{getBorderColor(section)}};">
 
                       {{course.subject_key}} <strong>{{course.catalog_number}}</strong> {{section.ssr_component}} 
                       <br/>
@@ -428,7 +420,7 @@
           <div class="card_content" layout vertical>
             <span>
              
-              <!-- I'll manage the data myself: 
+              I'll manage the data myself: 
               <input type="checkbox" ng-model="_app.saveToText"> <br/>
 
               <span ng-show='_app.saveToText'>
@@ -438,7 +430,7 @@
                   onclick="toggleDialog('saveToTextDialog')">
                 </paper-button>
                 <br/>
-              </span> -->
+              </span>
 
               Save and load to this browser: 
               <input 
@@ -463,11 +455,38 @@
                 
               </form>
             </span>
+            
 
-            <button 
+            <paper-dialog 
+              id="saveToTextDialog"
+              heading="This is your data." 
+              transition="paper-dialog-transition-center">
+
+              <p>To save your calendars just copy it to a safe place. To load previous
+                calendars just paste it here. <strong>This will override everything
+                currently in the application.</strong></p> <br/>
+              
+              <textarea
+                class="data"
+                ng-model="savedata"
+                flex></textarea>
+
+              <paper-button label="Cancel" affirmative></paper-button>
+              <paper-button 
+                label="Done" 
+                ng-click="loadData(savedata)"
+                affirmative 
+                autofocus>
+              </paper-button>
+
+            </paper-dialog>
+
+            <paper-button 
+              label="Kitties" 
               onClick="lolcatz()"
-              >Kitties
-            </button>
+              affirmative 
+              autofocus>
+            </paper-button>
             
             
             <script>
@@ -498,7 +517,6 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/bower_components/datejs/build/date.js"></script>
     <script src="/bower_components/spectrajs/spectra.min.js"></script>
-    <script src="/bower_components/angular-native-dragdrop/draganddrop.js"></script>
 
     <!-- Angular -->
     <script src="js/app.js"></script>

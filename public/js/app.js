@@ -3,7 +3,7 @@
 
 /* App */
 
-var app = angular.module('Tower', ['LocalStorageModule']);
+var app = angular.module('Tower', ['LocalStorageModule', 'ui.bootstrap', 'ngDragDrop']);
 
 // From: http://www.html5rocks.com/en/tutorials/frameworks/angular-websockets/
 // Wraps Socket.io on Anglular. Makes sure to check state and update on 
