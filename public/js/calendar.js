@@ -85,9 +85,6 @@ var Calendar = (function () {
      */
     self._collisionDB = {};
 
-
-
-
     Object.defineProperty(this, 'selectedCourses', {
       get : function () {
 
@@ -323,12 +320,13 @@ var Calendar = (function () {
     var prev = csects[section.ssr_component];
     csects[section.ssr_component] = section.class_number;
 
-    // Collision
-    // TODO: Don't add courses without meetings/no meeting data.
-    
-    // Delete the previously selected section one from collision db
+    // And remove previous from collisiondb.
     delete self._collisionDB[prev];
 
+
+    // Collision
+    if (section.meeting.start_time === '' || section.meeting.end_time === '') return;
+    
     // Check for collisions.
     this.checkCollisions();
 
@@ -446,6 +444,7 @@ var Calendar = (function () {
   };
 
   /**
+   * Will be deprecated. Katara will incorporate it. 
    * Converts string time representation to milliseconds since midnight.
    * @param  {String} time Time to convert
    * @return {Number}      Milliseconds since midnight represented by the given 

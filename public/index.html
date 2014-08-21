@@ -10,36 +10,21 @@
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/fp.css">
 
-
-    <!-- Vendor JS 
-    <script src="/bower_components/platform/platform.js"></script>-->
+    <!-- Vendor JS -->
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="/bower_components/angular/angular.min.js"></script>
     <script src="/bower_components/angular-local-storage/angular-local-storage.min.js"></script>
     <script src="/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
     <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
     <script src="/bower_components/es6-promise/promise.min.js"></script>
-
-    <!-- Polymer Components -->
-    <link rel="import"
-          href="/bower_components/polymer-ui-field/polymer-ui-field.html">
-    <link rel="import" 
-          href="/bower_components/polymer-ui-icon/polymer-ui-icon.html">
-    <link rel="import" 
-          href="/bower_components/polymer-ui-accordion/polymer-ui-accordion.html">
-    <link rel="import" 
-          href="/bower_components/core-tooltip/core-tooltip.html">
-    <link rel="import"
-          href="/bower_components/paper-button/paper-button.html">
-    <link rel="import" 
-          href="/bower_components/paper-dialog/paper-dialog-transition.html">
-    <link rel="import"
-          href="/bower_components/paper-dialog/paper-dialog.html">
   </head>
 
-  <body ng-app="Tower" black>
+  <body ng-app="Tower">
   
-      <div class="horizontal-container" start-justified horizontal ng-controller="AppController as app">
+      <div 
+        class="horizontal-container" 
+        start-justified horizontal 
+        ng-controller="AppController as app">
 
         <!--  <search-card></search-card> -->
 
@@ -440,7 +425,7 @@
                 <br/>
               </span> -->
 
-              Save and load to this browser: 
+              Save my data to this browser: 
               <input 
                 type="checkbox" 
                 ng-model="_app.saveToBrowser"
@@ -449,7 +434,7 @@
 
 
 
-              I'll login. Store my stuff there: <input type="checkbox" ng-model="_app.saveToLogin" disabled> <br/>
+              <!-- I'll login. Store my stuff there: <input type="checkbox" ng-model="_app.saveToLogin" disabled> <br/> -->
 
               <form 
                 id="login_form" 
