@@ -85,7 +85,8 @@ app.controller('CalendarController', function ($scope, socket, $timeout, $rootSc
   };
 
   $scope.getTop  = function (time) {
-    return (midnightMillis(time) / 86400000 /* Milliseconds in a day */) * height >> 0;
+    console.log(time)
+    return ( time /* midnightMillis(time) */ / 86400000 /* Milliseconds in a day */) * height >> 0;
   };
 
   $scope.getHeight = function (start, end) {

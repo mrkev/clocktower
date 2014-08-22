@@ -127,7 +127,10 @@
 
                   Grading basis {{result.course.grading_basis}}. <br/>
                   <!-- {{result.course | json}} -->
-                  <p ng-if=""></p>
+                  <input type="checkbox" ng-model='allinfo'>
+                  <p ng-if='allinfo'>
+                    {{result.course | json}}
+                  </p>
 
               </accordion-group>
             </accordion>
@@ -376,9 +379,9 @@
                         ui-on-drop="selectSection(section)"
                         
                         style ="width  : {{getWidth(section)}}px;
-                                height : {{getHeight(section.meeting.start_time, section.meeting.end_time)}}px;
+                                height : {{getHeight(section.meeting.start_tm, section.meeting.end_tm)}}px;
                                 left   : {{getLeft(weekday)}}px;
-                                top    : {{getTop(section.meeting.start_time)}}px;
+                                top    : {{getTop(section.meeting.start_tm)}}px;
   
                                 background-color: {{getBackgroundColor(section)}};
                                 border-color: {{getBorderColor(section)}};">

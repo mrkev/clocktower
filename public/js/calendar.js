@@ -407,11 +407,11 @@ var Calendar = (function () {
 
     // console.log('   Weedays match. Now times.');
 
-    var s1s = midnightMillis(s1.meeting.start_time);
-    var s1e = midnightMillis(s1.meeting.end_time);
+    var s1s = s1.meeting.start_tm   //midnightMillis(s1.meeting.start_time);
+    var s1e = s1.meeting.end_tm     //midnightMillis(s1.meeting.end_time);
 
-    var s2s = midnightMillis(s2.meeting.start_time);
-    var s2e = midnightMillis(s2.meeting.end_time);
+    var s2s = s2.meeting.start_tm   //midnightMillis(s2.meeting.start_time);
+    var s2e = s2.meeting.end_tm     //midnightMillis(s2.meeting.end_time);
 
     return (s1s <= s2s && s2s <= s1e) || (s2s <= s1s && s1s <= s2e);
   };

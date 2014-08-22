@@ -65,6 +65,30 @@ module.exports = (function () {
 		return data;
 	};
 
+	var midnightmillify = function (data) {
+	    data.forEach(function (course) {
+	        course.sections.forEach(function (section) {
+	        	if (!section.meeting) {console.log(section.course_id); return;}
+	            section.meeting.start_tm = midnightMillis(section.meeting.start_time);
+	            section.meeting.end_tm = midnightMillis(section.meeting.end_time);
+	        });
+	    });
+
+	    return data;
+	};
+
+	require('datejs');
+
+	/**
+	 * Converts string time representation to milliseconds since midnight.
+	 * @param  {String} time Time to convert
+	 * @return {Number}      Milliseconds since midnight represented by the given 
+	 *                       time.
+	 */
+	var midnightMillis = function (time) {
+	  return  Date.parse('July 26th, 2014, ' + time) - 
+	      Date.parse('July 26th, 2014, 12:00AM');
+	};
 
 	Williow.prototype.clearCache = function() {
 		this.db = null;
@@ -72,7 +96,9 @@ module.exports = (function () {
 
 	Williow.prototype.query = function() {
 		var self = this;
-		return rp(this.home).then(JSON.parse).then(function (data) {
+		return rp(this.home)
+			.then(JSON.parse)
+			.then(function (data) {
 	
 				var urls = [];
 				data.subjects.forEach(function (subj) {
@@ -83,6 +109,7 @@ module.exports = (function () {
 				return getter.get(800)
 							 .then(_.flatten)
 							 .then(addHash)
+							 .then(midnightmillify)
 							 .then(self.cache.bind(self));
 	
 			});
