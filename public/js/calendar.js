@@ -359,6 +359,9 @@ var Calendar = (function () {
      // console.log(s1.course_id, 'LOL', self._selectedCourses, 
      //   self._selectedCourses.indexOf(s1.course_id) < 0);
      
+      // Don't add sections with no meeting times to collision db.
+      if (s1.meeting.start_time.length === 0 || s1.meeting.end_time === 0) return;
+     
       if (self._selectedCourses.indexOf(s1.course_id) < 0) return;
       self._collisionDB[s1.class_number] = testCollision(s1, selsect);
     
@@ -405,13 +408,11 @@ var Calendar = (function () {
     var match = matchingMeetingPattern(s1, s2);
     if (match.length === 0) return false;
 
-    // console.log('   Weedays match. Now times.');
+    var s1s = s1.meeting.start_tm;
+    var s1e = s1.meeting.end_tm;
 
-    var s1s = s1.meeting.start_tm   //midnightMillis(s1.meeting.start_time);
-    var s1e = s1.meeting.end_tm     //midnightMillis(s1.meeting.end_time);
-
-    var s2s = s2.meeting.start_tm   //midnightMillis(s2.meeting.start_time);
-    var s2e = s2.meeting.end_tm     //midnightMillis(s2.meeting.end_time);
+    var s2s = s2.meeting.start_tm;
+    var s2e = s2.meeting.end_tm;
 
     return (s1s <= s2s && s2s <= s1e) || (s2s <= s1s && s1s <= s2e);
   };
@@ -441,18 +442,6 @@ var Calendar = (function () {
      }
 
      return res;
-  };
-
-  /**
-   * Will be deprecated. Katara will incorporate it. 
-   * Converts string time representation to milliseconds since midnight.
-   * @param  {String} time Time to convert
-   * @return {Number}      Milliseconds since midnight represented by the given 
-   *                       time.
-   */
-  var midnightMillis = function (time) {
-    return  Date.parse('July 26th, 2014, ' + time) - 
-        Date.parse('July 26th, 2014, 12:00AM');
   };
 
   /**

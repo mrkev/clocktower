@@ -1,14 +1,14 @@
 'use strict';
 /* global require, console, process */
 
-var Server 		= require('./Server');
-var CourseSrc 	= require('./CourseSrc');
-var Clockwork	= require('./Clockwork');
+var Server 		= require('./private/Server');
+var CourseSrc 	= require('./private/CourseSrc');
+var Clockwork	= require('./private/Clockwork');
 
 var config = require('./config.js');
 						  
 var srver = new Server();  
-var cdbll = new CourseSrc(require('./searchdb'));
+var cdbll = new CourseSrc(require('./private/searchdb'));
 var clock = new Clockwork(srver);
 
 // run this madness.

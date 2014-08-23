@@ -28,5 +28,9 @@
     "test": "mocha"
   },
   "author": "mrkev",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mrkev/clocktower.git"
+  }
 }

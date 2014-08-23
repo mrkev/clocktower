@@ -1,5 +1,4 @@
 
-
 /**
  * Configuration for Clocktower. Edit as you need. Here it's set
  * to run on OpenShift and locally.

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/fp.css">
+    <link rel="stylesheet" href="css/checkbox.css">
 
     <!-- Vendor JS -->
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
@@ -154,7 +155,13 @@
 
             <!-- Sidebar -->
             <div class="sidebar" layout vertical>
-              <span>Edit: <input type="checkbox" ng-model="app._app.editCalendar"></span>
+              <span>Edit: 
+                <input 
+                  type="checkbox" 
+                  id='edit'
+                  ng-model="app._app.editCalendar"
+                  class="checkbox seven">
+                <label for="edit">Edit</label></span>
               <span>Pre-Enroll: <input type="checkbox" ng-model="showPreenroll"></span>
 
 
@@ -354,6 +361,8 @@
                   <div 
                     class="section" 
 
+                    ng-if='section.meeting.start_time'
+
                     ng-hide="willQueryInfo(course) || 
                               (!isSelectedSection(section) && 
                                !isDraggingCompatibleSection(section))"
@@ -377,6 +386,11 @@
                         drag-channel="{{section.course_id}}-{{section.ssr_component}}"
                         drop-channel="{{section.course_id}}-{{section.ssr_component}}"
                         ui-on-drop="selectSection(section)"
+
+                        tooltip-placement="bottom" 
+                        tooltip-popup-delay='360'
+                        tooltip-html-unsafe="{{section.meeting.instructors[0]}} <br> {{section.meeting.facility_description}}"
+
                         
                         style ="width  : {{getWidth(section)}}px;
                                 height : {{getHeight(section.meeting.start_tm, section.meeting.end_tm)}}px;
@@ -386,6 +400,7 @@
                                 background-color: {{getBackgroundColor(section)}};
                                 border-color: {{getBorderColor(section)}};">
 
+                      
                       {{course.subject_key}} <strong>{{course.catalog_number}}</strong> {{section.ssr_component}} 
                       <br/>
                       <span ng-if="isColliding(section)">
@@ -456,7 +471,12 @@
               onClick="lolcatz()"
               >Kitties
             </button>
-            
+
+            <p>
+              <h3>{{appinfo.name}} {{appinfo.version}}</h3>
+              <p>{{appinfo.description}}</p>
+              <a href="{{appinfo.repository.weburl}}">Github</a>
+            </p>            
             
             <script>
               function toggleDialog(id) {

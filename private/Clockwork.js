@@ -16,7 +16,8 @@ module.exports = (function () {
 	 */
 	function TwoThirty (server) {
 		this.server = server;
-		this.server.app.use(server.express.static(__dirname + '/public'));
+		this.server.app.use(server.express.static(__dirname + './../public'));
+		this.appinfo = require('./../package.json');
 	}
 
 
@@ -34,6 +35,7 @@ module.exports = (function () {
 			console.log('user', user.id, 'connected');
 
 			socket.emit('user info', user);
+			socket.emit('app info', self.appinfo);
 
 			/*
 			 * Search the database

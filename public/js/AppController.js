@@ -37,4 +37,10 @@ app.controller('AppController', function ($scope, socket, localStorageService) {
   };
 
   socket.on('connect', function ()  {});
+  $scope.appinfo; 
+  socket.on('app info', function (info)  {
+    info.repository.weburl = info.repository.url.replace(/git/, 'https')
+    $scope.appinfo = info;
+  });
+
 });
