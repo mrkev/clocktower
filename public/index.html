@@ -21,6 +21,53 @@
   </head>
 
   <body ng-app="Tower">
+    <style>
+    body {
+      position: absolute;
+    }
+    #nav {
+      position: fixed;
+      display: block;
+      height: 50px;
+      left: 12px;
+      bottom: 12px;
+
+    }
+
+    #nav li {
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    #nav li a {
+      cursor: pointer;
+    }
+    </style>
+    <script>
+    // Add stuff from
+    // http://stackoverflow.com/questions/5244976/horizontal-scroll-detecting-scroll-position-relative-to-anchors
+    $(function() {
+        $('ul#nav li a').bind('click',function(event){
+            var $anchor = $(this);
+            console.log($anchor)
+            /*
+            if you want to use one of the easing effects:
+            $('html, body').stop().animate({
+                scrollLeft: $($anchor.attr('href')).offset().left
+            }, 1500,'easeInOutCirc');
+             */
+            $('html, body, .horizontal-container').stop().animate({
+                scrollLeft: $($anchor.attr('href')).offset().left - 20
+            }, 560);
+            event.preventDefault();
+        });
+    });
+    </script>
+    <ul id="nav" layout horizontal>
+      <li><a href="#SearchCard">Search</a></li>
+      <li><a href="#CalendarCard">Calendar</a></li>
+      <li><a href="#UserCard">Preferences</a></li>
+    </ul>
   
       <div 
         class="horizontal-container" 
@@ -30,6 +77,7 @@
         <!--  <search-card></search-card> -->
 
         <div class="card" ng-controller="SearchController as soyuz"> <!-- yuri  -->
+          <a id='SearchCard'></a>
           <div class="card_content" layout vertical>
             <form id="search_form" ng-submit="doSearch()">
               
@@ -150,7 +198,9 @@
 
         <div class="card wide" 
           ng-controller="CalendarController as vladimirovna" ng-init="initCalendar()">
+          <a id='CalendarCard'></a>
           <div class="card_content" layout horizontal>
+
             
 
             <!-- Sidebar -->
@@ -159,9 +209,7 @@
                 <input 
                   type="checkbox" 
                   id='edit'
-                  ng-model="app._app.editCalendar"
-                  class="checkbox seven">
-                <label for="edit">Edit</label></span>
+                  ng-model="app._app.editCalendar">
               <span>Pre-Enroll: <input type="checkbox" ng-model="showPreenroll"></span>
 
 
@@ -227,7 +275,7 @@
                 height: 300px;
               }
 
-
+              
               </style>
       
               <!-- <div layout horizontal>
@@ -266,6 +314,7 @@
               <div 
                 id="lolpreenroll"
                 class="print"
+                style="top: {{model._app.calendarScrollTop}};"
                 ng-if="showPreenroll">
                 <style>
                 #lolpreenroll {
@@ -427,7 +476,8 @@
 
         <!-- Last Card: User information -->
 
-        <div class="card">
+        <div class="card last">
+          <a id='UserCard'></a>
           <div class="card_content" layout vertical>
             <span>
              

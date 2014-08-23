@@ -61,6 +61,10 @@ app.controller('CalendarController', function ($scope, socket, $timeout, $rootSc
   
   $scope.initCalendar = function () {
     $('#lolcalendar').scrollTop($scope.model._app.calendarScrollTop);
+    $('#lolcalendar').scroll(function() {
+      $scope.model._app.calendarScrollTop = $('#lolcalendar').scrollTop();
+      console.log($scope.model._app.calendarScrollTop);
+    });
   };
 
   var width = 721;

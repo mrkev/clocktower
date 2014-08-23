@@ -97,8 +97,12 @@ html, body {height: 100%;}
   vertical-align:middle;
 }
 
-.wide {
+.card.wide {
   width: 963px;
+}
+
+.card.last {
+  margin-right: 337px;
 }
 
 .sidebar {
