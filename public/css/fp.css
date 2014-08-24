@@ -8,6 +8,10 @@ input.nice {
 	font-size: 14px;
 }
 
+input.nice:focus {
+	outline: none;
+}
+
 .icon {
 	height: 24px;
 	width: 24px;

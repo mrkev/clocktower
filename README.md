@@ -8,3 +8,8 @@ courses.
 *Currently only Firefox, Chrome and Safari (ugh) are supported. I don't test on opera because tbh, who uses it? IE doesn't work (what a suprise) and isn't yet supported. If you want to work on IE support, I'll accept your PRs with #respect.
 
 Trackpad with some good horizontal scrolling highly recommended; the UI is hevily dependent on scrolling. Might add scroll-to-anchor links later.
+
+### Known Bugs
+
+[ ] Pre-enroll has to be scrolled to
+[ ] Weird selection something with AGSCI 2940

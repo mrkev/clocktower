@@ -21,28 +21,6 @@
   </head>
 
   <body ng-app="Tower">
-    <style>
-    body {
-      position: absolute;
-    }
-    #nav {
-      position: fixed;
-      display: block;
-      height: 50px;
-      left: 12px;
-      bottom: 12px;
-
-    }
-
-    #nav li {
-      display: inline-block;
-      margin-right: 6px;
-    }
-
-    #nav li a {
-      cursor: pointer;
-    }
-    </style>
     <script>
     // Add stuff from
     // http://stackoverflow.com/questions/5244976/horizontal-scroll-detecting-scroll-position-relative-to-anchors
@@ -102,43 +80,6 @@
             </span>
             <span class="center very_light" ng-show="model.searchResults.length === 0">Nothing /:</span>
 
-            <style>
-            .accordion-toggle {
-              cursor: pointer;
-
-              /* layout horizontal */
-              -ms-flex-direction: row;
-              -webkit-flex-direction: row;
-              flex-direction: row;
-              display: -ms-flexbox;
-              display: -webkit-flex;
-              display: flex;
-
-            }
-
-            .accordion-toggle:hover {
-              text-decoration: none;
-
-            }
-            .ellipsis {
-              text-overflow: ellipsis;
-              overflow: hidden;
-            }
-
-            div.panel-heading {
-              padding: 10px 10px 6px 10px;
-            }
-
-            button.btn.btn-success.btn-xs.pull-right.ng-scope {
-              top: -2px;
-              position: relative;
-            }
-
-            .actionable:hover {
-              text-decoration: underline;
-            }
-
-            </style>
             <accordion class="flex">
               <accordion-group ng-repeat="result in model.searchResults track by $index">
                   
@@ -256,24 +197,7 @@
               </ul>
 
               <style>
-              .center {
-                text-align: center;
-              }
-              .big {
-                font-size: 2.5em;
-              }
-              .small {
-                font-size: 0.9em;
-                color: #222;
-              }
-              .monospace {
-                font-family: monospace;
-              }
 
-              #lolpreenroll {
-                position: absolute;
-                height: 300px;
-              }
 
               
               </style>
