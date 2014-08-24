@@ -1,6 +1,9 @@
 Clocktower
 ==========
 
+** Strictly beta software. Don't use as your main planning shenaningan cause backwards
+compatibility between versions is not guaranteed. ** 
+
 Clocktower is a very early attempt to replace Chequerd. It uses the RedAPI and whatnot. It doesn't 
 even have a decent README, but it works. It has collision detection, and a drag & drop GUI to select
 courses.
