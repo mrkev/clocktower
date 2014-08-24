@@ -9,6 +9,7 @@
     "npm": ">= 1.0.0"
   },
   "dependencies": {
+    "datejs": "^1.0.0-rc1",
     "es6-promise": "^1.0.0",
     "express": "^4.6.1",
     "jsonwebtoken": "^0.4.1",
