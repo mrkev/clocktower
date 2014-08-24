@@ -22,6 +22,7 @@ Trackpad with some good horizontal scrolling highly recommended.
     [ ] Custom events
     [ ] iCal support
     [ ] Good printing styles
+    [ ] Support for terms other than FA14
 
 ### Would be cool but wont happen for some time
 
