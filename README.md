@@ -11,5 +11,15 @@ Trackpad with some good horizontal scrolling highly recommended.
 
 ### Known Bugs
 
-    [ ] Pre-enroll has to be scrolled to
-    [ ] Weird selection something with AGSCI 2940
+    [ ] Pre-enroll has to be scrolled to after revealed
+    [ ] Scrollbar display issues on Safari
+
+### Todo
+
+    [ ] Custom events
+    [ ] iCal support
+    [ ] Good printing styles
+
+### Would be cool but wont happen for some time
+
+    [ ] Online accounts / online sharing 'a la chequerd'

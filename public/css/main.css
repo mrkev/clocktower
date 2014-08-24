@@ -13,6 +13,7 @@
   font-family: monospace;
 }
 
+.full_height { height: 100%; }
 
 /* Bottom nav bar */
 body {
@@ -202,9 +203,6 @@ input {
 textarea.data {
   font-size: 7px;
 }
-
-/* Shortcuts */
-.full_height { height: 100%; }
 
 
 /* paper-dialog */
