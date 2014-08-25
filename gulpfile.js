@@ -15,7 +15,7 @@ gulp.task('bump', function(){
 
   gulp.src('./public/bower.json')
   .pipe(bump())
-  .pipe(gulp.dest('./'));
+  .pipe(gulp.dest('./public'));
 });
 
 
