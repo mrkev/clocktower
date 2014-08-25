@@ -22,6 +22,10 @@
     "spectrajs": "~0.2.3",
     "es6-promise": "~1.0.0",
     "bootstrap": "~3.2.0",
-    "antiscroll": "*"
+    "antiscroll": "*",
+    "angular": "~1.2.23",
+    "angular-bootstrap": "~0.11.0",
+    "angular-native-dragdrop": "~1.0.3",
+    "polymer-ui-elements": "~0.3.0"
   }
 }
