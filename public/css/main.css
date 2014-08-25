@@ -22,8 +22,7 @@ body {
 #nav {
   position: fixed;
   display: block;
-  height: 50px;
-  left: 12px;
+  left: 6px;
   bottom: 12px;
 
 }
@@ -155,7 +154,7 @@ html, body {height: 100%;}
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
-  height: calc(100% - 26px);
+  height: calc(100%);
   padding-top: 26px;
   background-color: #EEE;
 }
