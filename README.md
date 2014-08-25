@@ -30,6 +30,7 @@ Clocktower will fetch all course information from [RedAPI](http://api-mrkev.rhcl
     [ ] Pre-enroll has to be scrolled to after revealed
     [ ] Scrollbar display issues on Safari
     [ ] Course tooltips interfere with course dropzones
+    [ ] Search results might randomly change or disappear
 
 ### Todo
 
