@@ -28,7 +28,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "mocha",
-    "postinstall": "(cd ./public && bower install)"
+    "postinstall": "(cd ./public; cd $PWD; bower install)"
   },
   "author": "mrkev",
   "license": "MIT",
