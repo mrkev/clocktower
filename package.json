@@ -1,6 +1,6 @@
 {
   "name": "clocktower",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Like chequerd but open source",
   "private": true,
   "main": "index.js",
@@ -25,9 +25,15 @@
     "underscore": "^1.6.0",
     "when": "^3.4.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "gulp": "^3.8.7",
+    "git-promise": "^0.2.0",
+    "gulp-bump": "^0.1.11",
+    "inquirer": "^0.6.0"
+  },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "postinstall": "cd ./public; bower install; cd ..)"
   },
   "author": "mrkev",
   "license": "MIT",
