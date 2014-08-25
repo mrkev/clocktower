@@ -34,6 +34,5 @@
   },
   "_source": "git://github.com/avp/spectra.git",
   "_target": "~0.2.3",
-  "_originalSource": "spectrajs",
-  "_direct": true
+  "_originalSource": "spectrajs"
 }

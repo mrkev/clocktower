@@ -1,21 +1,35 @@
 Clocktower
 ==========
 
-** Strictly beta software. Don't use as your main planning shenaningan cause backwards
-compatibility between versions is not guaranteed. ** 
+**Strictly beta software. Don't use as your main planning shenaningan becasue backwards compatibility between versions is not guaranteed.** 
 
-Clocktower is a very early attempt to replace Chequerd. It uses the RedAPI and whatnot. It doesn't 
-even have a decent README, but it works. It has collision detection, and a drag & drop GUI to select
-courses.
-
-*Currently only Firefox, Chrome and Safari are supported. Opera hasn't been tested. IE suprisingly doesn't work, and won't be officially supported for a while. If you want to work on IE support, I'll accept your PRs with `#respect`.
+*Currently only Firefox, Chrome and Safari are supported. Opera hasn't been tested. IE suprisingly doesn't work, and won't be officially supported for a while. If you want to work on IE support, I'll accept your PRs with `#respect`.*
 
 Trackpad with some good horizontal scrolling highly recommended.
+
+## Getting Started
+
+First, make sure you have Node.js installed. 
+
+Then clone.
+
+    git clone git@github.com:mrkev/clocktower.git && cd clocktower
+
+Install dependencies.
+
+    npm install
+
+Run.
+
+    node index
+
+Clocktower will fetch all course information from RedAPI, process it and then start the server.
 
 ### Known Bugs
 
     [ ] Pre-enroll has to be scrolled to after revealed
     [ ] Scrollbar display issues on Safari
+    [ ] Course tooltips interfere with course dropzones
 
 ### Todo
 
@@ -27,3 +41,4 @@ Trackpad with some good horizontal scrolling highly recommended.
 ### Would be cool but wont happen for some time
 
     [ ] Online accounts / online sharing 'a la chequerd'
+    [ ] Tests?

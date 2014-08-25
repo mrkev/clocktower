@@ -26,7 +26,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "postinstall" : "(cd ./public && bower install)"
   },
   "author": "mrkev",
   "license": "MIT",
