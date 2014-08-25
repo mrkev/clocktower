@@ -29,9 +29,12 @@ gulp.task('commit', function (){
 	}], 
 
 	function (answers) {
-		git('commit -am "' + answers.msg + '"')
+		git('add -A').then(function () {
+			git('commit -am "' + answers.msg + '"')
 
-		.fail(console.error);
+			.fail(console.error);
+		})	.fail(console.error);
+		
 
 	});
 });
