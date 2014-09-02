@@ -32,7 +32,7 @@
     "inquirer": "^0.6.0"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "mocha"
   },
   "author": "mrkev",
   "license": "MIT",
