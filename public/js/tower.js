@@ -51,8 +51,14 @@ var TowerModel = (function () {
       saveToText    : false,
       saveToBrowser : true,
       saveToLogin   : false,
-      calendarScrollTop : 58 * 7
+      calendarScrollTop : 58 * 7,
+      modelVersion : 0
     };
+
+    /*
+     * Add model version here, to make sure pre-existing unversioned models also get it.
+     */
+    if (!self._app.modelVersion) self._app.modelVersion = 0;
 
     /**
      * Calendar objects, one for each term.

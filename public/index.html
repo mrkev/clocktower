@@ -22,24 +22,7 @@
 
   <body ng-app="Tower">
     <script>
-    // Add stuff from
-    // http://stackoverflow.com/questions/5244976/horizontal-scroll-detecting-scroll-position-relative-to-anchors
-    $(function() {
-        $('ul#nav li a').bind('click',function(event){
-            var $anchor = $(this);
-            console.log($anchor)
-            /*
-            if you want to use one of the easing effects:
-            $('html, body').stop().animate({
-                scrollLeft: $($anchor.attr('href')).offset().left
-            }, 1500,'easeInOutCirc');
-             */
-            $('html, body, .horizontal-container').stop().animate({
-                scrollLeft: $($anchor.attr('href')).offset().left - 20
-            }, 560);
-            event.preventDefault();
-        });
-    });
+
     </script>
     <ul id="nav" layout horizontal>
       <li><a href="#SearchCard">Search</a></li>
@@ -52,6 +35,8 @@
         start-justified horizontal 
         ng-controller="AppController as app">
 
+        <!-- First Card -->
+
         <!--  <search-card></search-card> -->
 
         <div class="card" ng-controller="SearchController as soyuz"> <!-- yuri  -->
@@ -60,7 +45,6 @@
             <form id="search_form" ng-submit="doSearch()">
               
               <div class='ui_field' layout horizontal>
-                <polymer-ui-icon icon="search" ></polymer-ui-icon>
                 <div class='search icon' icon="search"></div>
                 <input class="nice" placeholder="Search"  ng-model="searchText" flex>
                 <div class='dialog icon'></div>
@@ -129,11 +113,7 @@
         </div>
 
 
-        <!-- 
-
-        Middle Card. The Calendar.
-
-        -->
+        <!--  Middle Card. The Calendar. -->
 
         <!--  <search-card></search-card> -->
 
@@ -146,14 +126,19 @@
 
             <!-- Sidebar -->
             <div class="sidebar" layout vertical>
-              <span>Edit: 
+              
+              <span>
+                Edit: 
                 <input 
                   type="checkbox" 
                   id='edit'
                   ng-model="app._app.editCalendar">
-              <span>Pre-Enroll: <input type="checkbox" ng-model="showPreenroll"></span>
 
-
+                  Pre-Enroll: 
+                  <input 
+                    type="checkbox" 
+                    ng-model="showPreenroll">
+              </span>
 
               <ul id="calendar_courses" class="striped_list src_list flex">
                 
@@ -168,6 +153,10 @@
                   <span ng-if="!willQueryInfo(course)">
                     {{course.subject_key}} {{course.catalog_number}} 
                   </span>
+                  <a
+                    popover="{{course | json}}" 
+                    popover-placement="right"
+                    popover-title="{{course.title}}">Hi</a>
                   
                   <span class="flex"></span>
 
@@ -195,38 +184,14 @@
                 </li>
 
               </ul>
-
-              <style>
-
-
-              
-              </style>
       
-              <!-- <div layout horizontal>
-                <div layout vertical flex>
-                  <paper-button label="Hello world"></paper-button>
-                  <paper-button label="Hello world"></paper-button>
-
-
-                </div> -->
-                <div class="center">
-                  <span class='big'>{{calendar.units}}</span>
-                  <br/><span classs='small'>total credits</span>
-                </div>
-              <!-- </div> -->
+              <div class="center">
+                <span class='big'>{{calendar.units}}</span>
+                <br/><span classs='small'>total credits</span>
+              </div>
 
             </div>
             
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -240,6 +205,7 @@
                 class="print"
                 style="top: {{model._app.calendarScrollTop}};"
                 ng-if="showPreenroll">
+                
                 <style>
                 #lolpreenroll {
                   padding: 12px 6px;
@@ -404,18 +370,6 @@
           <a id='UserCard'></a>
           <div class="card_content" layout vertical>
             <span>
-             
-              <!-- I'll manage the data myself: 
-              <input type="checkbox" ng-model="_app.saveToText"> <br/>
-
-              <span ng-show='_app.saveToText'>
-                <paper-button 
-                  ng-show="_app.saveToText"
-                  label="Load or save data" 
-                  onclick="toggleDialog('saveToTextDialog')">
-                </paper-button>
-                <br/>
-              </span> -->
 
               Save my data to this browser: 
               <input 
@@ -450,19 +404,6 @@
                 <a href="{{appinfo.repository.weburl}}">Github</a>
               </p>
             </span>            
-            
-            <script>
-              function toggleDialog(id) {
-                var dialog = document.querySelector('paper-dialog#' + id);
-                dialog.toggle();
-              }
-
-              function lolcatz () {
-                var k = 'http://placekitten.com/g/' + (500 + Math.random() * 1000 >> 0) + '/' + (500 + Math.random() * 1000 >> 0);
-                console.log(k);
-                window.open(k);
-              }          
-            </script>
 
           </div>
         </div>
@@ -474,6 +415,9 @@
     <script src="js/YoDB.js"></script>
     <script src="js/tower.js"></script>
     <script src="js/calendar.js"></script>
+
+    <!-- UI -->
+    <script src="js/index.js"></script>
 
     <!-- Vendor -->
     <script src="/socket.io/socket.io.js"></script>

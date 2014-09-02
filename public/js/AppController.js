@@ -3,7 +3,7 @@
 
 /* Controllers */
 
-app.controller('AppController', function ($scope, socket, localStorageService) {
+app.controller('AppController', function ($scope, socket, localStorageService, $modal) {
   // Load browser savedata.
   var savedata = localStorageService.get('clocktower-savedata');
   $scope.model = savedata ? new TowerModel(savedata) : new TowerModel();
@@ -37,10 +37,30 @@ app.controller('AppController', function ($scope, socket, localStorageService) {
   };
 
   socket.on('connect', function ()  {});
-  $scope.appinfo; 
+  $scope.appinfo = {};
   socket.on('app info', function (info)  {
-    info.repository.weburl = info.repository.url.replace(/git/, 'https')
+    info.repository.weburl = info.repository.url.replace(/git/, 'https');
     $scope.appinfo = info;
+  });
+
+
+  // Display beta dialog
+  // 
+  var modalInstance = $modal.open({
+    templateUrl: 'html/beta-dialog.html',
+    controller: function ($scope, $modalInstance) {
+      $scope.ok = function () {
+         $modalInstance.close();
+      };
+
+      $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+      };
+    }
+  });
+
+  modalInstance.result.then(function () {
+    $scope.model._app.shown.beta = true;
   });
 
 });
