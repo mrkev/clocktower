@@ -33,7 +33,6 @@
   },
   "scripts": {
     "test": "mocha",
-    "postinstall": "cd ./public; bower install; cd ..)"
   },
   "author": "mrkev",
   "license": "MIT",
