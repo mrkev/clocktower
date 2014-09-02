@@ -56,4 +56,5 @@ gulp.task('push-origin', function () {
 gulp.task('next', ['bump', 'commit', 'push-github']);
 gulp.task('up',   ['bump', 'commit', 'push-github', 'push-origin']);
 
+gulp.task('publish', ['push-github', 'push-origin'])
 
