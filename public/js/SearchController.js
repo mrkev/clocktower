@@ -37,12 +37,14 @@ app.controller('SearchController', function ($scope, socket, $sce) {
     $scope.model.searchResults = results;
     console.log('now the html part');
     $scope.model.searchResults.forEach(function (result) {
+      console.log(result)
+
         
         result.display_html = $sce.trustAsHtml
                                   (result.display_html.replace
                                       ($scope.searchText, '<strong>$&</strong>'));
 
-        result.course.class_description = $sce.trustAsHtml
+        result.body_html= $sce.trustAsHtml
                                   (result.body_html.replace
                                       ($scope.searchText, '<strong>$&</strong>'));
     });

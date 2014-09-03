@@ -3,6 +3,8 @@
   <head>
     <title>Tower</title>
 
+    <!-- Metas -->
+    <meta name="viewport" content="width=device-width">
     <!-- CSS -->
     <link rel="stylesheet" href="/bower_components/normalize-css/normalize.css">
     <link rel="stylesheet" href='/bower_components/bootstrap/dist/css/bootstrap.min.css'>
@@ -18,6 +20,7 @@
     <script src="/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
     <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
     <script src="/bower_components/es6-promise/promise.min.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   </head>
 
   <body ng-app="Tower">
@@ -68,7 +71,9 @@
               <accordion-group ng-repeat="result in model.searchResults track by $index">
                   
                   <accordion-heading>
-                      <span class="ellipsis actionable flex" ng-bind-html="result.display_html"></span>
+                      <span 
+                        class="ellipsis actionable flex" 
+                        ng-bind-html="result.display_html"></span>
 
                       <button
                         class="btn btn-success btn-xs pull-right"
@@ -77,7 +82,7 @@
                       </button>
                   </accordion-heading>
                   
-                  <p ng-bind-html="result.course.class_description"></p>
+                  <p ng-bind-html="result.body_html"></p>
                   
                   <p ng-if="result.course.crosslists.length > 0">
                     Crosslisted as 
@@ -144,22 +149,33 @@
                 
                 <li 
                   ng-repeat="course in model.calendars[model.term].courses"
-                  style="border-left-color: {{getBorderColor(course.sections[0]);}}">
+                  style="border-left-color: {{getBorderColor(course.sections[0]);}}" layout horizontal>
 
                   <span ng-if="willQueryInfo(course)">
                     Loading course...
                   </span>
-
-                  <span ng-if="!willQueryInfo(course)">
-                    {{course.subject_key}} {{course.catalog_number}} 
-                  </span>
-                  <a
-                    popover="{{course | json}}" 
-                    popover-placement="right"
-                    popover-title="{{course.title}}">Hi</a>
                   
-                  <span class="flex"></span>
 
+                  <style>
+                  .popover {
+                    max-height: 350px;
+                    overflow: scroll;
+                  }
+                  </style>
+                  <!-- popover-trigger="mouseenter" -->
+                  <span 
+                    class="willpop"
+                    id="{{course.course_id}}"
+                    pop-title="{{course.title}}"
+                    pop-content="{{course.class_description}}"
+                    pop-placement="right"
+                    yo-homie-pops
+                    flex>
+                    {{course.subject_key}} {{course.catalog_number}}
+                  </span>
+
+                  <!-- Space so popover shows nice -->
+                  <span style="width:24px;"></span>
                   <div class="detail">{{course.units}}</div>
 
                   <button 
@@ -308,17 +324,33 @@
                     ng-repeat="section in course.sections"
                     ng-class="{selected: isSelectedSection(section),
                                oneof : ssrCompenentsOfType(course, section.ssr_component) > 1,
-                               colliding : isColliding(section)}" on-finish-render>
+                               colliding : isColliding(section)}">
 
                     <!-- 
                         ondragstart="console.log('dragging yo');"
                         ondragend='console.log("stopping the drag, yo");' -->
+                    <script>
+                    function dragging (dragging) {
+                      if (dragging) {
+                        $('.tooltip').hide();
+                      } else {
+                        $('.tooltip').show();
+
+                      }
+                    }
+                    </script>
+
+
                     <div 
                         ng-repeat="weekday in section.meeting.meeting_pattern"
-                        class = "gathering"
+                        class="gathering"
+
+                        ondragstart="dragging(true);"
+
                         data-section="{{section}}"
                         ui-draggable="{{isSelectedSection(section)}}"
                         drag="section"
+                        ondragstart="console.log('dragging yo');"
                         ng-class = "{'draggable' :  isSelectedSection(section),
                                      'droppable' : !isSelectedSection(section)}"
 
@@ -327,7 +359,7 @@
                         ui-on-drop="selectSection(section)"
 
                         tooltip-placement="bottom" 
-                        tooltip-popup-delay='360'
+                        tooltip-popup-delay='0'
                         tooltip-html-unsafe="{{section.meeting.instructors[0]}} <br> {{section.meeting.facility_description}}"
 
                         

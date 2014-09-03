@@ -146,10 +146,6 @@ app.controller('CalendarController', function ($scope, socket, $timeout, $rootSc
     return color.rgbaString();
   };
 
-
-  // Drag, drop.
-  // 
-
   /**
    * Section being dragged.
    * @type {Section?? course_id, ssr_component} 
@@ -168,83 +164,6 @@ app.controller('CalendarController', function ($scope, socket, $timeout, $rootSc
             $scope.dragging_section.course_id     === section.course_id) : false;
   };
 
-  /**
-   * Applies drag-drop from JQuery-UI to all pertinent classes.
-   */
-  var applyJQueryDrag = function () {
-    // $('.draggable').draggable({
-
-    //   /**
-    //    * Items go back to original position when released.
-    //    * @type {Boolean}
-    //    */
-    //   revert : true,
-
-    //   /**
-    //    * No animation when items go back to original position.
-    //    * @type {Number}
-    //    */
-    //   revertDuration : 0,
-
-    //   // cursorAt: { top: 500, left: 50 },
-
-    //   stack : '.draggable',
-      
-    //   /**
-    //    * Show non-selected courses with the same ssr_component. This is done
-    //    * by setting $scope.dragging_ssr to the ssr of the section of the
-    //    * gathering being dragged.
-    //    * @param  {[type]} event [description]
-    //    * @param  {[type]} ui    [description]
-    //    * @return {[type]}       [description]
-    //    */
-    //   start : function (event, ui) {
-    //     // Show sections with same SSR.
-    //     $scope.dragging_section = JSON.parse(event.target.dataset.section);
-    //     $scope.$apply();
-    //   },
-
-    //   *
-    //    * [end description]
-    //    * @return {[type]} [description]
-       
-    //   stop : function () {
-    //     $scope.dragging_section = null;
-    //     $scope.$apply();
-    //   }
-    // });
-
-
-
-    // $('.droppable').droppable({ 
-
-    //   /**
-    //    * Triggered when a draggable is dropped on top of this droppable. Selects
-    //    * this droppable's section. Updates angular and re-applies jquery 
-    //    * dragging.
-    //    *
-    //    * ui.draggable[0] = html element being dragged. Why is it an array?
-    //    * event.target    = element on which drop was recieved.
-    //    */
-    //   drop : function (event, ui) {
-
-    //     // Select the section
-    //     var section = JSON.parse(event.target.dataset.section);
-        
-        
-    //     // Update angular.
-    //     $scope.$apply(function () {
-    //       $scope.selectSection(section);
-    //     });
-    
-    //     // Reapply draggable and droppable after digest cycle.
-    //     $timeout(function(){
-    //       applyJQueryDrag();
-    //     }); 
-    //   } 
-    // });
-  };
-
   var reg = /(^.*)-(.*)/;
   $rootScope.$on('ANGULAR_DRAG_START', function (event, sendChannel) {
       var matches = reg.exec(sendChannel);
@@ -259,9 +178,9 @@ app.controller('CalendarController', function ($scope, socket, $timeout, $rootSc
       });
   });
 
-  // Whenever a repeat is done applies jquery dragging goodness.
+  // Whenever a repeat is done applies popover goodness.
   $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
-    applyJQueryDrag();
+    //applyPopovers();
   });
 
 
@@ -284,11 +203,33 @@ app.controller('CalendarController', function ($scope, socket, $timeout, $rootSc
 
 });
 
+app.directive('yoHomiePops', function() {
+ return function(scope, element, attrs) {
+  console.log(attrs);
+  $(element).bind('click', function (e) {
+      $(".willpop").popover('hide');
+      e.stopPropagation();
+  });
+
+  $(document).bind('click', function (e) {
+      $(".willpop").popover('hide');
+  });
+
+  $(element).popover({
+        placement: attrs.popPlacement,
+        html: 'true',
+        trigger : 'click',
+        content : attrs.popContent
+    });
+  }
+
+})
 
 app.directive('onFinishRender', function ($timeout) {
   return {
     restrict: 'A',
     link: function (scope, element, attr) {
+      console.log('OFR', element);
       if (scope.$last === true) {
         $timeout(function () {
           scope.$emit('ngRepeatFinished');
@@ -296,4 +237,4 @@ app.directive('onFinishRender', function ($timeout) {
       }
     }
   };
-});
+})

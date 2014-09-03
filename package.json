@@ -1,6 +1,6 @@
 {
   "name": "clocktower",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Like chequerd but open source",
   "private": true,
   "main": "index.js",

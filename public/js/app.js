@@ -9,6 +9,50 @@ var app = angular.module('Tower', ['LocalStorageModule', 'ui.bootstrap', 'ngDrag
 // Wraps Socket.io on Anglular. Makes sure to check state and update on 
 // socket.io events.
 
+
+/* Configuration */
+
+/**
+ * Always append ui.bootstrap tooltips (and popovers) to body. Solves bug where
+ * popovers weren't appearing at the correct left/right displacement relative
+ * to the screen.
+ */
+app.config(['$tooltipProvider',function($tooltipProvider) {
+  $tooltipProvider.appendToBody = true;
+  console.log($tooltipProvider);
+}])
+
+/**
+ * Filter for unsafe html.
+ */
+app.filter('unsafe', ['$sce', function ($sce) {
+    return function (val) {
+        return $sce.trustAsHtml(val);
+    };
+}]);
+
+/**
+ * Overrides ui.bootstrap's template to allow the use of html as the body or 
+ * title.
+ */
+angular
+  .module('template/popover/popover.html', [])
+  .run(['$templateCache', function ($templateCache) {
+    $templateCache.put('template/popover/popover.html',
+      '<div class=\"popover {{placement}}\" ng-class=\"{ in: isOpen(), fade: animation() }\">\n' +
+      '  <div class=\"arrow\"></div>\n' +
+      '\n' +
+      '  <div class=\"popover-inner\">\n' +
+      '<button type="button" id="close" class="close"' +
+      'onclick="$(&quot;#example&quot;).popover(&quot;hide&quot;);">&times;</button>' + 
+      '      <h3 class=\"popover-title\" ng-bind-html=\"title | unsafe\" ng-show=\"title\"></h3>\n' +
+      '      <div class=\"popover-content\"ng-bind-html=\"content | unsafe\"></div>\n' +
+      '  </div>\n' +
+      '</div>\n' +
+      '');
+}]);
+
+
 /* Services */
 
 // Demonstrate how to register services
